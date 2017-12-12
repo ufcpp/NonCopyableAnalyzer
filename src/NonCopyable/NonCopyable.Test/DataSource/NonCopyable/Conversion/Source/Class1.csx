@@ -33,5 +33,7 @@ class Program
 
         var a1 = new Counter[] { new Counter() };
         var a2 = new object[] { new Counter(), c };
+
+        (object x, int i) = (new Counter(), 1);
     }
 }
