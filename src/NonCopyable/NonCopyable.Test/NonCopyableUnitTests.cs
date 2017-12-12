@@ -1,10 +1,6 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using System;
+﻿using Microsoft.CodeAnalysis.Diagnostics;
 using TestHelper;
 using Xunit;
-using NonCopyable;
 
 namespace NonCopyable.Test
 {
@@ -15,8 +11,6 @@ namespace NonCopyable.Test
 
         [Fact]
         public void LowercaseLetters() => VerifyCSharpByConvention();
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider() => new NonCopyableCodeFixProvider();
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new NonCopyableAnalyzer();
     }

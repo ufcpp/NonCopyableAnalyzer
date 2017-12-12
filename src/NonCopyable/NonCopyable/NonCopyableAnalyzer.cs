@@ -28,9 +28,24 @@ namespace NonCopyable
 
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterSyntaxNodeAction(AnalyzerNode, SyntaxKind.IdentifierName);
+
             // TODO: Consider registering other actions that act on syntax instead of or in addition to symbols
             // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
-            context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
+            //context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
+        }
+
+        private void AnalyzerNode(SyntaxNodeAnalysisContext obj)
+        {
+            var n = obj.Node;
+            var sem = obj.SemanticModel;
+            var s = n.ToString();
+            var ti = sem.GetTypeInfo(n);
+
+            if(s == "c")
+            {
+
+            }
         }
 
         private static void AnalyzeSymbol(SymbolAnalysisContext context)
