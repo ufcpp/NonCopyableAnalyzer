@@ -14,8 +14,7 @@ struct Counter
 class Class1
 {
     private Counter _c;
-    Counter C1 => _c;
-    Counter C2 { get { return _c; } }
-    Counter C3 { get; set; }
-    Counter C4 { get => _c; }
+    Counter C1 { get; set; }
+    Counter C2 { set => _c = value; }
+    Counter C3 { set { _c = value; } }
 }

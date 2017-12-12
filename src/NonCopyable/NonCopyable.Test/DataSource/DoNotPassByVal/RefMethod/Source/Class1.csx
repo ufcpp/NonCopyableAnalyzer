@@ -14,8 +14,9 @@ struct Counter
 class Class1
 {
     private Counter _c;
-    Counter C1 => _c;
-    Counter C2 { get { return _c; } }
-    Counter C3 { get; set; }
-    Counter C4 { get => _c; }
+    void Ref1(ref Counter c) { }
+    void In1(in Counter c) { }
+
+    static void Ref2(ref Counter c) { }
+    static void In1(in Counter c) { }
 }

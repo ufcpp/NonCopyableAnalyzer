@@ -4,15 +4,13 @@ using Xunit;
 
 namespace NonCopyable.Test
 {
-    public class DoNotRetrunByVal : ConventionCodeFixVerifier
+    public class DoNotPassByVal : ConventionCodeFixVerifier
     {
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new DoNotRetrunByValAnalyzer();
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new DoNotPassByValAnalyzer();
 
         [Fact] public void RefMethod() => VerifyCSharpByConvention();
-        [Fact] public void RefProperty() => VerifyCSharpByConvention();
         [Fact] public void Method() => VerifyCSharpByConvention();
         [Fact] public void Property() => VerifyCSharpByConvention();
-        [Fact] public void Constructor() => VerifyCSharpByConvention();
         [Fact] public void Operator() => VerifyCSharpByConvention();
     }
 }
