@@ -30,19 +30,27 @@ namespace NonCopyable
                 csc.RegisterOperationAction(oc =>
                 {
                     var op = (IArgumentOperation)oc.Operation;
+                    var t = op.Value.Type;
+                    if (!t.IsNonCopyable()) return;
                     if (op.Parameter.RefKind != RefKind.None) return;
-                    if (!op.Value.Type.IsNonCopyable()) return;
                     if (AllowsCopy(op.Value)) return;
 
-                    oc.ReportDiagnostic(Diagnostic.Create(Rule, op.Syntax.GetLocation(), op.Value.Type.Name));
+                    oc.ReportDiagnostic(Diagnostic.Create(Rule, op.Syntax.GetLocation(), t.Name));
                 }, OperationKind.Argument);
+
+                csc.RegisterOperationAction(oc =>
+                {
+                    var op = (IConversionOperation)oc.Operation;
+                    var t = op.Operand.Type;
+                    if (!t.IsNonCopyable()) return;
+                    oc.ReportDiagnostic(Diagnostic.Create(Rule, op.Syntax.GetLocation(), t.Name));
+                }, OperationKind.Conversion);
             });
 
             //    OperationKind.ArrayInitializer,
             //    OperationKind.CaseClause,
             //    OperationKind.CollectionElementInitializer,
             //    OperationKind.CompoundAssignment,
-            //    OperationKind.Conversion,
             //    OperationKind.DeclarationExpression,
             //    OperationKind.DeclarationPattern,
             //    OperationKind.DeconstructionAssignment,

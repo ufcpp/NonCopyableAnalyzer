@@ -9,6 +9,7 @@ namespace NonCopyable.Test
         [Fact] public void EmptySource() => VerifyCSharpByConvention();
         [Fact] public void LowercaseLetters() => VerifyCSharpByConvention();
         [Fact] public void Argument() => VerifyCSharpByConvention();
+        [Fact] public void Conversion() => VerifyCSharpByConvention();
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new NonCopyableAnalyzer();
     }
