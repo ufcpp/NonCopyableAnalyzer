@@ -11,4 +11,5 @@ struct Counter
     public int Value => _i;
 
     public static Counter operator +(Counter x, Counter y) => new Counter();
+    public static bool operator ==(in Counter x, in Counter y) => new Counter();
 }
