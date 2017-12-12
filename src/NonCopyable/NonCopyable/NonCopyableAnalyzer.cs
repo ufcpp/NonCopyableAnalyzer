@@ -7,60 +7,128 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace NonCopyable
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class NonCopyableAnalyzer : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "NonCopyable";
+        public const string DiagnosticId = "NoCopy";
+        internal const string Title = "non-copyable";
+        internal const string MessageFormat = "The type '{0}' is non-copyable";
+        internal const string Category = "Correction";
 
-        // You can change these strings in the Resources.resx file. If you do not want your analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
-        // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Localizing%20Analyzers.md for more on localization
-        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(Resources.AnalyzerTitle), Resources.ResourceManager, typeof(Resources));
-        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(Resources.AnalyzerMessageFormat), Resources.ResourceManager, typeof(Resources));
-        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(Resources.AnalyzerDescription), Resources.ResourceManager, typeof(Resources));
-        private const string Category = "Naming";
-
-        private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: Description);
+        private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Error, isEnabledByDefault: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rule); } }
 
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(AnalyzerNode, SyntaxKind.IdentifierName);
+            context.RegisterCompilationStartAction(csc =>
+            {
+                csc.RegisterOperationAction(oc =>
+                {
+                    var op = (IArgumentOperation)oc.Operation;
+                    if (op.Parameter.RefKind != RefKind.None) return;
+                    if (!op.Value.Type.IsNonCopyable()) return;
+                    if (AllowsCopy(op.Value)) return;
 
-            // TODO: Consider registering other actions that act on syntax instead of or in addition to symbols
-            // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
-            //context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
+                    oc.ReportDiagnostic(Diagnostic.Create(Rule, op.Syntax.GetLocation(), op.Value.Type.Name));
+                }, OperationKind.Argument);
+            });
+
+            //    OperationKind.ArrayInitializer,
+            //    OperationKind.CaseClause,
+            //    OperationKind.CollectionElementInitializer,
+            //    OperationKind.CompoundAssignment,
+            //    OperationKind.Conversion,
+            //    OperationKind.DeclarationExpression,
+            //    OperationKind.DeclarationPattern,
+            //    OperationKind.DeconstructionAssignment,
+            //    OperationKind.FieldInitializer,
+            //    OperationKind.InterpolatedString,
+            //    OperationKind.InterpolatedStringText,
+            //    OperationKind.Interpolation,
+            //    OperationKind.Invocation,
+            //    OperationKind.IsPattern,
+            //    OperationKind.IsType,
+            //    OperationKind.MemberInitializer,
+            //    OperationKind.ObjectOrCollectionInitializer,
+            //    OperationKind.ParameterInitializer,
+            //    OperationKind.PropertyInitializer,
+            //    OperationKind.Return,
+            //    OperationKind.SimpleAssignment,
+            //    OperationKind.Switch,
+            //    OperationKind.Tuple,
+            //    OperationKind.UnaryOperator,
+            //    OperationKind.BinaryOperator,
+            //    OperationKind.VariableDeclaration,
+            //    OperationKind.VariableDeclarationGroup,
+            //    OperationKind.VariableInitializer,
+            //    OperationKind.YieldReturn
         }
 
-        private void AnalyzerNode(SyntaxNodeAnalysisContext obj)
+        private void AnalyzeOperation(OperationAnalysisContext context)
         {
-            var n = obj.Node;
-            var sem = obj.SemanticModel;
-            var s = n.ToString();
-            var ti = sem.GetTypeInfo(n);
+            ITypeSymbol ltype = null;
+            IOperation rvalue = null;
 
-            if(s == "c")
+            var semantics = context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree);
+            var conv = semantics.GetConversion(context.Operation.Syntax);
+            var a = semantics.GetSpeculativeTypeInfo(0, context.Operation.Syntax, SpeculativeBindingOption.BindAsExpression);
+            var b = semantics.GetSpeculativeTypeInfo(0, context.Operation.Syntax, SpeculativeBindingOption.BindAsTypeOrNamespace);
+
+            var xxx = context.Operation.Syntax;
+            var list = new List<string>();
+            for (int i = 0; i < 4; i++)
+            {
+                if (xxx == null) break;
+                list.Add(xxx.ToString());
+                xxx = xxx.Parent;
+            }
+
+            switch (context.Operation)
+            {
+                case IDeconstructionAssignmentOperation o:
+                    break;
+                case ITupleOperation o:
+                    break;
+                case IArgumentOperation o:
+                    var kind = o.Parameter.RefKind;
+                    ltype = o.Parameter.Type;
+                    rvalue = o.Value;
+                    var s0 = rvalue.Syntax;
+                    var s1 = s0.Parent;
+                    var s2 = s1.Parent;
+                    break;
+                case IFieldInitializerOperation o:
+                    ltype = o.Type;
+                    rvalue = o.Value;
+                    break;
+                case IReturnOperation o:
+                    ltype = o.Type;
+                    rvalue = o.ReturnedValue;
+            var xx = rvalue?.Type;
+                    var p = rvalue.Parent;
+                    var ss = o.Syntax;
+                    var ssp = o.Syntax.Parent;
+                    break;
+                default:
+                    break;
+            }
+
+
+            if(ltype != null && ltype.IsNonCopyable())
             {
 
             }
         }
 
-        private static void AnalyzeSymbol(SymbolAnalysisContext context)
+        private static bool AllowsCopy(IOperation op)
         {
-            // TODO: Replace the following code with your own analysis, generating Diagnostic objects for any issues you find
-            var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
-
-            // Find just those named type symbols with names containing lowercase letters.
-            if (namedTypeSymbol.Name.ToCharArray().Any(char.IsLower))
-            {
-                // For all such symbols, produce a diagnostic.
-                var diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations[0], namedTypeSymbol.Name);
-
-                context.ReportDiagnostic(diagnostic);
-            }
+            return op.Kind == OperationKind.ObjectCreation;
+            //todo: move semantics
         }
     }
 }
