@@ -9,8 +9,8 @@ namespace NonCopyable
     public class DoNotRetrunByValAnalyzer : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "NoCopy02";
-        internal const string Title = "Do not return a non-copyable struct by value.";
-        internal const string MessageFormat = "The return type of the method '{0}' is non-copyable";
+        internal const string Title = "return-by-value causes copy";
+        internal const string MessageFormat = "The return type of '{0}' can't be non-copyable";
         internal const string Category = "Correction";
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Error, isEnabledByDefault: true);

@@ -9,8 +9,8 @@ namespace NonCopyable
     public class DoNotUseReadOnlyFieldAnalyzer : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "NoCopy01";
-        internal const string Title = "Do not use a non-copyable struct for a read-only field.";
-        internal const string MessageFormat = "The type of the readonly field '{0}' is non-copyable";
+        internal const string Title = "readonly field causes copy";
+        internal const string MessageFormat = "The type of the readonly field '{0}' can't be non-copyable";
         internal const string Category = "Correction";
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Error, isEnabledByDefault: true);
