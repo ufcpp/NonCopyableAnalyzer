@@ -29,6 +29,30 @@ namespace NonCopyable
             {
                 csc.RegisterOperationAction(oc =>
                 {
+                    var op = (ISymbolInitializerOperation)oc.Operation;
+                    var t = op.Value.Type;
+                    if (!t.IsNonCopyable()) return;
+                    if (AllowsCopy(op.Value)) return;
+
+                    oc.ReportDiagnostic(Diagnostic.Create(Rule, op.Syntax.GetLocation(), t.Name));
+                }, OperationKind.FieldInitializer,
+                OperationKind.ParameterInitializer,
+                OperationKind.PropertyInitializer,
+                OperationKind.VariableInitializer);
+
+                csc.RegisterOperationAction(oc =>
+                {
+                    var op = (ISimpleAssignmentOperation)oc.Operation;
+                    if (op.IsRef) return;
+                    var t = op.Value.Type;
+                    if (!t.IsNonCopyable()) return;
+                    if (AllowsCopy(op.Value)) return;
+
+                    oc.ReportDiagnostic(Diagnostic.Create(Rule, op.Value.Syntax.GetLocation(), t.Name));
+                }, OperationKind.SimpleAssignment);
+
+                csc.RegisterOperationAction(oc =>
+                {
                     var op = (IArgumentOperation)oc.Operation;
                     var t = op.Value.Type;
                     if (!t.IsNonCopyable()) return;
@@ -53,18 +77,11 @@ namespace NonCopyable
             //    OperationKind.CompoundAssignment,
             //    OperationKind.DeclarationExpression,
             //    OperationKind.DeclarationPattern,
-            //    OperationKind.DeconstructionAssignment,
-            //    OperationKind.FieldInitializer,
-            //    OperationKind.InterpolatedString,
-            //    OperationKind.InterpolatedStringText,
-            //    OperationKind.Interpolation,
-            //    OperationKind.Invocation,
+            //    OperationKind.Invocation, // non-ref extension method
             //    OperationKind.IsPattern,
             //    OperationKind.IsType,
             //    OperationKind.MemberInitializer,
             //    OperationKind.ObjectOrCollectionInitializer,
-            //    OperationKind.ParameterInitializer,
-            //    OperationKind.PropertyInitializer,
             //    OperationKind.Return,
             //    OperationKind.SimpleAssignment,
             //    OperationKind.Switch,
@@ -73,7 +90,6 @@ namespace NonCopyable
             //    OperationKind.BinaryOperator,
             //    OperationKind.VariableDeclaration,
             //    OperationKind.VariableDeclarationGroup,
-            //    OperationKind.VariableInitializer,
             //    OperationKind.YieldReturn
         }
 
@@ -135,7 +151,27 @@ namespace NonCopyable
 
         private static bool AllowsCopy(IOperation op)
         {
-            return op.Kind == OperationKind.ObjectCreation;
+            var k = op.Kind;
+
+            if(k == OperationKind.Conversion)
+            {
+                // default literal
+                //need help
+                if (((IConversionOperation)op).Operand.Kind == OperationKind.Invalid) return true;
+            }
+
+            if (k == OperationKind.LocalReference || k == OperationKind.FieldReference || k == OperationKind.PropertyReference)
+            {
+                //need help: how to get ref-ness from IOperation?
+                var parent = op.Syntax.Parent.Kind();
+                if (parent == SyntaxKind.RefExpression) return true;
+            }
+
+            return k == OperationKind.ObjectCreation
+                || k == OperationKind.DefaultValue
+                || k == OperationKind.Literal;
+
+            //todo: should return value be OK?
             //todo: move semantics
         }
     }

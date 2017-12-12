@@ -198,7 +198,7 @@ namespace TestHelper
 
                 var operations = codeAction.GetOperationsAsync(CancellationToken.None).Result;
                 var solution = operations.OfType<ApplyChangesOperation>().Single().ChangedSolution;
-                project = solution.GetProject(project.Id);
+                project = solution.GetProject(project.Id).WithParseOptions(new CSharpParseOptions(LanguageVersion.Latest));
 
                 fixableDiagnostics = GetDiagnostics(project, analyzer)
                     .Where(d => fix.FixableDiagnosticIds.Contains(d.Id)).ToArray();
