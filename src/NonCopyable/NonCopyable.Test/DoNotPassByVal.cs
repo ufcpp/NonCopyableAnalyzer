@@ -12,5 +12,6 @@ namespace NonCopyable.Test
         [Fact] public void Method() => VerifyCSharpByConvention();
         [Fact] public void Property() => VerifyCSharpByConvention();
         [Fact] public void Operator() => VerifyCSharpByConvention();
+        [Fact] public void ExtensionMethod() => VerifyCSharpByConvention();
     }
 }

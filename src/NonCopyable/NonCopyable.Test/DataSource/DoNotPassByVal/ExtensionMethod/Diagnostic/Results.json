@@ -1,0 +1,10 @@
+﻿[
+  {
+    "id": "NoCopy03",
+    "sevirity": "Error",
+    "line": 19,
+    "column": 28,
+    "path": "Class1.csx",
+    "message-args": [ "c" ]
+  }
+]
