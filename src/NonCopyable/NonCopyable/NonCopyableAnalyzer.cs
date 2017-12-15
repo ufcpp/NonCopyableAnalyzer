@@ -90,8 +90,6 @@ namespace NonCopyable
             //    OperationKind.DeclarationPattern,
             //    OperationKind.IsPattern,
             //    OperationKind.IsType,
-            //    OperationKind.MemberInitializer,
-            //    OperationKind.ObjectOrCollectionInitializer,
             //    OperationKind.Return,
             //    OperationKind.Switch,
             //    OperationKind.Tuple,
@@ -106,7 +104,7 @@ namespace NonCopyable
         {
             foreach (var p in m.Parameters)
             {
-                if(p.RefKind == RefKind.None || p.RefKind == RefKind.Out)
+                if(p.RefKind == RefKind.None)
                 {
                     if (p.Type.IsNonCopyable()) return true;
                 }

@@ -29,4 +29,10 @@ class Program
         c1 = c2;
         c2 = new Counter();
     }
+
+    static void M(ref Counter i, out Counter o)
+    {
+        o = new Counter();
+        o = i;
+    }
 }
