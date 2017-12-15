@@ -51,7 +51,11 @@ namespace NonCopyable
                 csc.RegisterOperationAction(oc =>
                 {
                     var op = (IConversionOperation)oc.Operation;
-                    CheckCopyDisallowed(oc, op.Operand);
+                    var v = op.Operand;
+                    if (v.Kind == OperationKind.DefaultValue) return;
+                    var t = v.Type;
+                    if (!t.IsNonCopyable()) return;
+                    oc.ReportDiagnostic(Diagnostic.Create(Rule, v.Syntax.GetLocation(), t.Name));
                 }, OperationKind.Conversion);
 
                 csc.RegisterOperationAction(oc =>
@@ -185,22 +189,15 @@ namespace NonCopyable
             oc.ReportDiagnostic(Diagnostic.Create(Rule, v.Syntax.GetLocation(), t.Name));
         }
 
-        private static void CheckCopyDisallowed(OperationAnalysisContext oc, IOperation v)
-        {
-            var t = v.Type;
-            if (!t.IsNonCopyable()) return;
-            oc.ReportDiagnostic(Diagnostic.Create(Rule, v.Syntax.GetLocation(), t.Name));
-        }
-
         private static bool AllowsCopy(IOperation op)
         {
             var k = op.Kind;
 
             if(k == OperationKind.Conversion)
             {
-                // default literal
-                //need help
-                if (((IConversionOperation)op).Operand.Kind == OperationKind.Invalid) return true;
+                var operandKind = ((IConversionOperation)op).Operand.Kind;
+                // default literal (invalid if LangVersion < 7.1)
+                if (operandKind == OperationKind.DefaultValue || operandKind == OperationKind.Invalid) return true;
             }
 
             if (k == OperationKind.LocalReference || k == OperationKind.FieldReference || k == OperationKind.PropertyReference)
