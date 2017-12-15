@@ -105,12 +105,12 @@ namespace NonCopyable
                 }, OperationKind.Tuple);
             });
 
-            //    OperationKind.CompoundAssignment,
+            //todo: How should return value be treated?
             //    OperationKind.Return,
-            //    OperationKind.Tuple,
             //    OperationKind.YieldReturn
 
             // not supported yet:
+            //    OperationKind.CompoundAssignment,
             //    OperationKind.UnaryOperator,
             //    OperationKind.BinaryOperator,
         }
