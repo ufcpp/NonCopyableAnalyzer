@@ -1,7 +1,7 @@
 # NonCopyableAnalyzer
 
 Some kind of structs should not be copied (especially mutable structs).
-This package contains an analyzer for such a structs.
+This package contains an analyzer for such a struct.
 
 NuGet: [https://www.nuget.org/packages/NonCopyableAnalyzer/](https://www.nuget.org/packages/NonCopyableAnalyzer/)
 
