@@ -45,6 +45,7 @@ namespace NonCopyable
 
                 csc.RegisterOperationAction(oc =>
                 {
+                    // including non-ref extension method invocation
                     var op = (IArgumentOperation)oc.Operation;
                     if (op.Parameter.RefKind != RefKind.None) return;
                     CheckCopyability(oc, op.Value);
@@ -63,13 +64,11 @@ namespace NonCopyable
             //    OperationKind.CompoundAssignment,
             //    OperationKind.DeclarationExpression,
             //    OperationKind.DeclarationPattern,
-            //    OperationKind.Invocation, // non-ref extension method
             //    OperationKind.IsPattern,
             //    OperationKind.IsType,
             //    OperationKind.MemberInitializer,
             //    OperationKind.ObjectOrCollectionInitializer,
             //    OperationKind.Return,
-            //    OperationKind.SimpleAssignment,
             //    OperationKind.Switch,
             //    OperationKind.Tuple,
             //    OperationKind.UnaryOperator,

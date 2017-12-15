@@ -1,0 +1,42 @@
+﻿[
+  {
+    "id": "NoCopy",
+    "sevirity": "Error",
+    "line": 35,
+    "column": 9,
+    "path": "Class1.csx",
+    "message-args": [ "Counter" ]
+  },
+  {
+    "id": "NoCopy",
+    "sevirity": "Error",
+    "line": 38,
+    "column": 25,
+    "path": "Class1.csx",
+    "message-args": [ "Counter" ]
+  },
+  {
+    "id": "NoCopy",
+    "sevirity": "Error",
+    "line": 39,
+    "column": 17,
+    "path": "Class1.csx",
+    "message-args": [ "Counter" ]
+  },
+  {
+    "id": "NoCopy",
+    "sevirity": "Error",
+    "line": 40,
+    "column": 17,
+    "path": "Class1.csx",
+    "message-args": [ "Counter" ]
+  },
+  {
+    "id": "NoCopy",
+    "sevirity": "Error",
+    "line": 41,
+    "column": 17,
+    "path": "Class1.csx",
+    "message-args": [ "Counter" ]
+  }
+]
