@@ -95,11 +95,11 @@ namespace NonCopyable
             //    OperationKind.CompoundAssignment,
             //    OperationKind.Return,
             //    OperationKind.Tuple,
+            //    OperationKind.YieldReturn
+
+            // not supported yet:
             //    OperationKind.UnaryOperator,
             //    OperationKind.BinaryOperator,
-            //    OperationKind.VariableDeclaration,
-            //    OperationKind.VariableDeclarationGroup,
-            //    OperationKind.YieldReturn
         }
 
         private static bool HasNonCopyableParameter(IMethodSymbol m)
