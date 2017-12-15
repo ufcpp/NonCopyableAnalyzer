@@ -82,16 +82,18 @@ namespace NonCopyable
                         CheckCopyability(oc, a);
                     }
                 }, OperationKind.CollectionElementInitializer);
+
+                csc.RegisterOperationAction(oc =>
+                {
+                    var op = (IDeclarationPatternOperation)oc.Operation;
+                    var t = ((ILocalSymbol)op.DeclaredSymbol).Type;
+                    if (!t.IsNonCopyable()) return;
+                    oc.ReportDiagnostic(Diagnostic.Create(Rule, op.Syntax.GetLocation(), t.Name));
+                }, OperationKind.DeclarationPattern);
             });
 
-            //    OperationKind.CaseClause,
             //    OperationKind.CompoundAssignment,
-            //    OperationKind.DeclarationExpression,
-            //    OperationKind.DeclarationPattern,
-            //    OperationKind.IsPattern,
-            //    OperationKind.IsType,
             //    OperationKind.Return,
-            //    OperationKind.Switch,
             //    OperationKind.Tuple,
             //    OperationKind.UnaryOperator,
             //    OperationKind.BinaryOperator,
