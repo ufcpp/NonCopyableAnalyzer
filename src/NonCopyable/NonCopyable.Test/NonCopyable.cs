@@ -16,6 +16,7 @@ namespace NonCopyable.Test
         [Fact] public void DeclPattern() => VerifyCSharpByConvention();
         [Fact] public void Operator() => VerifyCSharpByConvention();
         [Fact] public void ReadOnly() => VerifyCSharpByConvention();
+        [Fact] public void Annotations() => VerifyCSharpByConvention();
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new NonCopyableAnalyzer();
     }

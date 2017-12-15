@@ -1,0 +1,66 @@
+﻿[
+  {
+    "id": "NoCopy",
+    "sevirity": "Error",
+    "line": 6,
+    "column": 18,
+    "path": "A1.csx",
+    "message-args": [ "A1" ]
+  },
+  {
+    "id": "NoCopy",
+    "sevirity": "Error",
+    "line": 6,
+    "column": 18,
+    "path": "A2.csx",
+    "message-args": [ "A2" ]
+  },
+  {
+    "id": "NoCopy",
+    "sevirity": "Error",
+    "line": 8,
+    "column": 22,
+    "path": "A3.csx",
+    "message-args": [ "A3" ]
+  },
+  {
+    "id": "NoCopy",
+    "sevirity": "Error",
+    "line": 6,
+    "column": 18,
+    "path": "A4.csx",
+    "message-args": [ "A4" ]
+  },
+  {
+    "id": "NoCopy",
+    "sevirity": "Error",
+    "line": 6,
+    "column": 18,
+    "path": "A5.csx",
+    "message-args": [ "A5" ]
+  },
+  {
+    "id": "NoCopy",
+    "sevirity": "Error",
+    "line": 8,
+    "column": 22,
+    "path": "A6.csx",
+    "message-args": [ "A6" ]
+  },
+  {
+    "id": "NoCopy",
+    "sevirity": "Error",
+    "line": 6,
+    "column": 18,
+    "path": "A7.csx",
+    "message-args": [ "A7" ]
+  },
+  {
+    "id": "NoCopy",
+    "sevirity": "Error",
+    "line": 8,
+    "column": 18,
+    "path": "MissAnnotation.csx",
+    "message-args": [ "MissAnnotation" ]
+  }
+]
