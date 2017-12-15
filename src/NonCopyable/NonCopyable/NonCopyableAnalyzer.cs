@@ -103,6 +103,31 @@ namespace NonCopyable
                         CheckCopyability(oc, v);
                     }
                 }, OperationKind.Tuple);
+
+                csc.RegisterOperationAction(oc =>
+                {
+                    // instance property/event should not be referenced with in parameter/ref readonly local/readonly field
+                    var op = (IMemberReferenceOperation)oc.Operation;
+                    CheckInstanceReadonly(oc, op.Instance);
+                }, OperationKind.PropertyReference,
+                OperationKind.EventReference);
+
+                csc.RegisterOperationAction(oc =>
+                {
+                    // instance method should not be invoked with in parameter/ref readonly local/readonly field
+                    var op = (IInvocationOperation)oc.Operation;
+                    if (op.TargetMethod.IsStatic) return;
+                    CheckInstanceReadonly(oc, op.Instance);
+
+                }, OperationKind.Invocation);
+
+                csc.RegisterOperationAction(oc =>
+                {
+                    // delagate creation
+                    var op = (IMemberReferenceOperation)oc.Operation;
+                    if (!op.Instance.Type.IsNonCopyable()) return;
+                    oc.ReportDiagnostic(Diagnostic.Create(Rule, op.Instance.Syntax.GetLocation(), op.Instance.Type.Name));
+                }, OperationKind.MethodReference);
             });
 
             //todo: How should return value be treated?
@@ -113,6 +138,36 @@ namespace NonCopyable
             //    OperationKind.CompoundAssignment,
             //    OperationKind.UnaryOperator,
             //    OperationKind.BinaryOperator,
+        }
+
+        private static void CheckInstanceReadonly(OperationAnalysisContext oc, IOperation instance)
+        {
+            var t = instance.Type;
+            if (!t.IsNonCopyable()) return;
+
+            if (IsInstanceReadonly(instance))
+            {
+                oc.ReportDiagnostic(Diagnostic.Create(Rule, instance.Syntax.GetLocation(), t.Name));
+            }
+        }
+
+        private static bool IsInstanceReadonly(IOperation instance)
+        {
+            bool isReadOnly = false;
+            switch (instance)
+            {
+                case IFieldReferenceOperation r:
+                    isReadOnly = r.Field.IsReadOnly;
+                    break;
+                case ILocalReferenceOperation r:
+                    isReadOnly = r.Local.RefKind == RefKind.In;
+                    break;
+                case IParameterReferenceOperation r:
+                    isReadOnly = r.Parameter.RefKind == RefKind.In;
+                    break;
+            }
+
+            return isReadOnly;
         }
 
         private static bool HasNonCopyableParameter(IMethodSymbol m)
