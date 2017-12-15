@@ -213,7 +213,7 @@ namespace TestHelper
         {
             var compilationWithAnalyzers = project.GetCompilationAsync().Result.WithAnalyzers(ImmutableArray.Create(analyzer));
             var diagnostics = compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().Result;
-            return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
+            return diagnostics.OrderBy(d => d.Location.GetMappedLineSpan().Path).ThenBy(d => d.Location.SourceSpan.Start).ToArray();
         }
 
         protected virtual IEnumerable<MetadataReference> References
