@@ -94,62 +94,6 @@ namespace NonCopyable
             oc.ReportDiagnostic(Diagnostic.Create(Rule, v.Syntax.GetLocation(), t.Name));
         }
 
-        private void AnalyzeOperation(OperationAnalysisContext context)
-        {
-            ITypeSymbol ltype = null;
-            IOperation rvalue = null;
-
-            var semantics = context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree);
-            var conv = semantics.GetConversion(context.Operation.Syntax);
-            var a = semantics.GetSpeculativeTypeInfo(0, context.Operation.Syntax, SpeculativeBindingOption.BindAsExpression);
-            var b = semantics.GetSpeculativeTypeInfo(0, context.Operation.Syntax, SpeculativeBindingOption.BindAsTypeOrNamespace);
-
-            var xxx = context.Operation.Syntax;
-            var list = new List<string>();
-            for (int i = 0; i < 4; i++)
-            {
-                if (xxx == null) break;
-                list.Add(xxx.ToString());
-                xxx = xxx.Parent;
-            }
-
-            switch (context.Operation)
-            {
-                case IDeconstructionAssignmentOperation o:
-                    break;
-                case ITupleOperation o:
-                    break;
-                case IArgumentOperation o:
-                    var kind = o.Parameter.RefKind;
-                    ltype = o.Parameter.Type;
-                    rvalue = o.Value;
-                    var s0 = rvalue.Syntax;
-                    var s1 = s0.Parent;
-                    var s2 = s1.Parent;
-                    break;
-                case IFieldInitializerOperation o:
-                    ltype = o.Type;
-                    rvalue = o.Value;
-                    break;
-                case IReturnOperation o:
-                    ltype = o.Type;
-                    rvalue = o.ReturnedValue;
-            var xx = rvalue?.Type;
-                    var p = rvalue.Parent;
-                    var ss = o.Syntax;
-                    var ssp = o.Syntax.Parent;
-                    break;
-                default:
-                    break;
-            }
-
-
-            if(ltype != null && ltype.IsNonCopyable())
-            {
-
-            }
-        }
-
         private static bool AllowsCopy(IOperation op)
         {
             var k = op.Kind;
