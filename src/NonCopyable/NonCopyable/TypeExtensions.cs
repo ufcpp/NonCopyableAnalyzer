@@ -7,6 +7,7 @@ namespace NonCopyable
     {
         public static bool IsNonCopyable(this ITypeSymbol t)
         {
+            if (t == null) return false;
             if (!t.IsValueType) return false;
 
             foreach (var decl in t.DeclaringSyntaxReferences)
