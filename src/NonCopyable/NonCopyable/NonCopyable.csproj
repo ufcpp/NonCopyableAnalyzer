@@ -7,17 +7,14 @@
   </PropertyGroup>
   
   <PropertyGroup>
-    <PackageId>NonCopyable</PackageId>
-    <PackageVersion>1.0.0.0</PackageVersion>
-    <Authors>AUTHOR_NAME</Authors>
-    <PackageLicenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</PackageLicenseUrl>
-    <PackageProjectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</PackageProjectUrl>
-    <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl>
-    <RepositoryUrl>http://REPOSITORY_URL_HERE_OR_DELETE_THIS_LINE</RepositoryUrl>
+    <PackageId>NonCopyableAnalyzer</PackageId>
+    <PackageVersion>0.1.0</PackageVersion>
+    <Authors>Nobuyuki Iwanaga</Authors>
+    <PackageLicenseUrl>https://github.com/ufcpp/NonCopyableAnalyzer/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/ufcpp/NonCopyableAnalyzer</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Description>NonCopyable</Description>
-    <PackageReleaseNotes>Summary of changes made in this release of the package.</PackageReleaseNotes>
-    <Copyright>Copyright</Copyright>
+    <Description>Analyzer for Non-copyable struct</Description>
+    <PackageReleaseNotes>initial release.</PackageReleaseNotes>
     <PackageTags>NonCopyable, analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
   </PropertyGroup>
