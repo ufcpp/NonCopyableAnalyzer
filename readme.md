@@ -87,3 +87,29 @@ class Program
 ```
 
 ![do not invoke methods/properties with ref readonly](docs/NonCopyableReadOnlyRef.png)
+
+### How to fix
+
+In this case, you should use `ref` parameter.
+
+```cs
+using System.Collections.Sequences;
+
+class Program
+{
+    static void Main()
+    {
+        var a = new ResizableArray<short>();
+
+        AddUtf16(ref a, "abcd");
+    }
+
+    static void AddUtf16(ref ResizableArray<short> a, string s)
+    {
+        foreach (var c in s)
+        {
+            a.Add((short)c);
+        }
+    }
+}
+```
