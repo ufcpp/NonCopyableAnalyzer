@@ -167,7 +167,7 @@ namespace TestHelper
             }
         }
 
-        private static Project ApplyFix(Project project, DiagnosticAnalyzer analyzer, CodeFixProvider fix, int fixIndex)
+        private Project ApplyFix(Project project, DiagnosticAnalyzer analyzer, CodeFixProvider fix, int fixIndex)
         {
             var diagnostics = GetDiagnostics(project, analyzer);
             var fixableDiagnostics = diagnostics.Where(d => fix.FixableDiagnosticIds.Contains(d.Id)).ToArray();
@@ -198,7 +198,9 @@ namespace TestHelper
 
                 var operations = codeAction.GetOperationsAsync(CancellationToken.None).Result;
                 var solution = operations.OfType<ApplyChangesOperation>().Single().ChangedSolution;
-                project = solution.GetProject(project.Id).WithParseOptions(new CSharpParseOptions(LanguageVersion.Latest));
+                project = solution.GetProject(project.Id)
+                    .WithParseOptions(ParseOptions)
+                    .WithCompilationOptions(CompilationOptions);
 
                 fixableDiagnostics = GetDiagnostics(project, analyzer)
                     .Where(d => fix.FixableDiagnosticIds.Contains(d.Id)).ToArray();
@@ -227,6 +229,7 @@ namespace TestHelper
             }
         }
 
+        protected virtual CSharpParseOptions ParseOptions => new CSharpParseOptions(LanguageVersion.Latest);
         protected virtual CSharpCompilationOptions CompilationOptions => new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
 
         protected Project CreateProject(Dictionary<string, string> sources)
@@ -255,6 +258,7 @@ namespace TestHelper
             }
 
             var project = solution.GetProject(projectId)
+                .WithParseOptions(ParseOptions)
                 .WithCompilationOptions(CompilationOptions);
             return project;
         }
