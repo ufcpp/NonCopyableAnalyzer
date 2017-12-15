@@ -17,6 +17,6 @@
     <ProjectReference Include="..\NonCopyable\NonCopyable.csproj" />
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties DataSource_4NonCopyableUnitTests_4LowercaseLetters_4Diagnostic_4Results_1json__JSONSchema="result-schama-v2" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>

@@ -30,11 +30,7 @@ namespace NonCopyable
                 csc.RegisterOperationAction(oc =>
                 {
                     var op = (ISymbolInitializerOperation)oc.Operation;
-                    var t = op.Value.Type;
-                    if (!t.IsNonCopyable()) return;
-                    if (AllowsCopy(op.Value)) return;
-
-                    oc.ReportDiagnostic(Diagnostic.Create(Rule, op.Syntax.GetLocation(), t.Name));
+                    CheckCopyability(oc, op.Value);
                 }, OperationKind.FieldInitializer,
                 OperationKind.ParameterInitializer,
                 OperationKind.PropertyInitializer,
@@ -44,30 +40,20 @@ namespace NonCopyable
                 {
                     var op = (ISimpleAssignmentOperation)oc.Operation;
                     if (op.IsRef) return;
-                    var t = op.Value.Type;
-                    if (!t.IsNonCopyable()) return;
-                    if (AllowsCopy(op.Value)) return;
-
-                    oc.ReportDiagnostic(Diagnostic.Create(Rule, op.Value.Syntax.GetLocation(), t.Name));
+                    CheckCopyability(oc, op.Value);
                 }, OperationKind.SimpleAssignment);
 
                 csc.RegisterOperationAction(oc =>
                 {
                     var op = (IArgumentOperation)oc.Operation;
-                    var t = op.Value.Type;
-                    if (!t.IsNonCopyable()) return;
                     if (op.Parameter.RefKind != RefKind.None) return;
-                    if (AllowsCopy(op.Value)) return;
-
-                    oc.ReportDiagnostic(Diagnostic.Create(Rule, op.Syntax.GetLocation(), t.Name));
+                    CheckCopyability(oc, op.Value);
                 }, OperationKind.Argument);
 
                 csc.RegisterOperationAction(oc =>
                 {
                     var op = (IConversionOperation)oc.Operation;
-                    var t = op.Operand.Type;
-                    if (!t.IsNonCopyable()) return;
-                    oc.ReportDiagnostic(Diagnostic.Create(Rule, op.Syntax.GetLocation(), t.Name));
+                    CheckCopyDisallowed(oc, op.Operand);
                 }, OperationKind.Conversion);
             });
 
@@ -91,6 +77,21 @@ namespace NonCopyable
             //    OperationKind.VariableDeclaration,
             //    OperationKind.VariableDeclarationGroup,
             //    OperationKind.YieldReturn
+        }
+
+        private static void CheckCopyability(OperationAnalysisContext oc, IOperation v)
+        {
+            var t = v.Type;
+            if (!t.IsNonCopyable()) return;
+            if (AllowsCopy(v)) return;
+            oc.ReportDiagnostic(Diagnostic.Create(Rule, v.Syntax.GetLocation(), t.Name));
+        }
+
+        private static void CheckCopyDisallowed(OperationAnalysisContext oc, IOperation v)
+        {
+            var t = v.Type;
+            if (!t.IsNonCopyable()) return;
+            oc.ReportDiagnostic(Diagnostic.Create(Rule, v.Syntax.GetLocation(), t.Name));
         }
 
         private void AnalyzeOperation(OperationAnalysisContext context)
