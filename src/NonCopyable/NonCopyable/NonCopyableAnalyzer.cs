@@ -38,6 +38,8 @@ namespace NonCopyable
 
                 csc.RegisterOperationAction(oc =>
                 {
+                    // including member initializer
+                    // including collection element initializer
                     var op = (ISimpleAssignmentOperation)oc.Operation;
                     if (op.IsRef) return;
                     CheckCopyability(oc, op.Value);
@@ -56,11 +58,33 @@ namespace NonCopyable
                     var op = (IConversionOperation)oc.Operation;
                     CheckCopyDisallowed(oc, op.Operand);
                 }, OperationKind.Conversion);
+
+                csc.RegisterOperationAction(oc =>
+                {
+                    var op = (IArrayInitializerOperation)oc.Operation;
+
+                    if (!((IArrayTypeSymbol)((IArrayCreationOperation)op.Parent).Type).ElementType.IsNonCopyable()) return;
+
+                    foreach (var v in op.ElementValues)
+                    {
+                        CheckCopyability(oc, v);
+                    }
+                }, OperationKind.ArrayInitializer);
+
+                csc.RegisterOperationAction(oc =>
+                {
+                    var op = (ICollectionElementInitializerOperation)oc.Operation;
+
+                    if (!HasNonCopyableParameter(op.AddMethod)) return;
+
+                    foreach (var a in op.Arguments)
+                    {
+                        CheckCopyability(oc, a);
+                    }
+                }, OperationKind.CollectionElementInitializer);
             });
 
-            //    OperationKind.ArrayInitializer,
             //    OperationKind.CaseClause,
-            //    OperationKind.CollectionElementInitializer,
             //    OperationKind.CompoundAssignment,
             //    OperationKind.DeclarationExpression,
             //    OperationKind.DeclarationPattern,
@@ -76,6 +100,18 @@ namespace NonCopyable
             //    OperationKind.VariableDeclaration,
             //    OperationKind.VariableDeclarationGroup,
             //    OperationKind.YieldReturn
+        }
+
+        private static bool HasNonCopyableParameter(IMethodSymbol m)
+        {
+            foreach (var p in m.Parameters)
+            {
+                if(p.RefKind == RefKind.None || p.RefKind == RefKind.Out)
+                {
+                    if (p.Type.IsNonCopyable()) return true;
+                }
+            }
+            return false;
         }
 
         private static void CheckCopyability(OperationAnalysisContext oc, IOperation v)

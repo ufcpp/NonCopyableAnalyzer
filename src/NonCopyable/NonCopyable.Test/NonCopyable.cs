@@ -12,6 +12,7 @@ namespace NonCopyable.Test
         [Fact] public void Assignment() => VerifyCSharpByConvention();
         [Fact] public void SymbolInitialize() => VerifyCSharpByConvention();
         [Fact] public void Invocation() => VerifyCSharpByConvention();
+        [Fact] public void ObjectInitializer() => VerifyCSharpByConvention();
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new NonCopyableAnalyzer();
     }
