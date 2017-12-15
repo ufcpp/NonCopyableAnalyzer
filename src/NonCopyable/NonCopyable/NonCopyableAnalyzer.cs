@@ -90,6 +90,19 @@ namespace NonCopyable
                     if (!t.IsNonCopyable()) return;
                     oc.ReportDiagnostic(Diagnostic.Create(Rule, op.Syntax.GetLocation(), t.Name));
                 }, OperationKind.DeclarationPattern);
+
+                csc.RegisterOperationAction(oc =>
+                {
+                    var op = (ITupleOperation)oc.Operation;
+
+                    // exclude ParenthesizedVariableDesignationSyntax
+                    if (op.Syntax.Kind() != SyntaxKind.TupleExpression) return;
+
+                    foreach (var v in op.Elements)
+                    {
+                        CheckCopyability(oc, v);
+                    }
+                }, OperationKind.Tuple);
             });
 
             //    OperationKind.CompoundAssignment,
