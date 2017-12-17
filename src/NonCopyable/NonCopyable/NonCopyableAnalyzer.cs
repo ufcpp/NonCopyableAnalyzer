@@ -148,6 +148,8 @@ namespace NonCopyable
 
         private static void CheckInstanceReadonly(OperationAnalysisContext oc, IOperation instance)
         {
+            if (instance == null) return;
+
             var t = instance.Type;
             if (!t.IsNonCopyable()) return;
 

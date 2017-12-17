@@ -9,6 +9,7 @@ namespace NonCopyable.Test
         [Fact] public void EmptySource() => VerifyCSharpByConvention();
         [Fact] public void Argument() => VerifyCSharpByConvention();
         [Fact] public void Return() => VerifyCSharpByConvention();
+        [Fact] public void Property() => VerifyCSharpByConvention();
         [Fact] public void Conversion() => VerifyCSharpByConvention();
         [Fact] public void Assignment() => VerifyCSharpByConvention();
         [Fact] public void SymbolInitialize() => VerifyCSharpByConvention();
