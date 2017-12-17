@@ -134,11 +134,17 @@ namespace NonCopyable
                     if (!op.Instance.Type.IsNonCopyable()) return;
                     oc.ReportDiagnostic(Diagnostic.Create(Rule, op.Instance.Syntax.GetLocation(), op.Instance.Type.Name));
                 }, OperationKind.MethodReference);
-            });
 
-            //todo: How should return value be treated?
-            //    OperationKind.Return,
-            //    OperationKind.YieldReturn
+                csc.RegisterSymbolAction(sac =>
+                {
+                    var f = (IFieldSymbol)sac.Symbol;
+                    if (f.IsStatic) return;
+                    if (!f.Type.IsNonCopyable()) return;
+                    if (f.ContainingType.IsReferenceType) return;
+                    if (f.ContainingType.IsNonCopyable()) return;
+                    sac.ReportDiagnostic(Diagnostic.Create(Rule, f.DeclaringSyntaxReferences[0].GetSyntax().GetLocation(), f.Type.Name));
+                }, SymbolKind.Field);
+            });
 
             // not supported yet:
             //    OperationKind.CompoundAssignment,
