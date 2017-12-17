@@ -50,6 +50,13 @@ namespace NonCopyable
 
                 csc.RegisterOperationAction(oc =>
                 {
+                    var op = (IReturnOperation)oc.Operation;
+                    CheckCopyability(oc, op.ReturnedValue);
+                }, OperationKind.Return,
+                OperationKind.YieldReturn);
+
+                csc.RegisterOperationAction(oc =>
+                {
                     var op = (IConversionOperation)oc.Operation;
                     var v = op.Operand;
                     if (v.Kind == OperationKind.DefaultValue) return;
@@ -209,7 +216,8 @@ namespace NonCopyable
 
             return k == OperationKind.ObjectCreation
                 || k == OperationKind.DefaultValue
-                || k == OperationKind.Literal;
+                || k == OperationKind.Literal
+                || k == OperationKind.Invocation;
 
             //todo: should return value be OK?
             //todo: move semantics

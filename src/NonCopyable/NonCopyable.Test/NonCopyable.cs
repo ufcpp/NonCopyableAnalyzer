@@ -8,6 +8,7 @@ namespace NonCopyable.Test
     {
         [Fact] public void EmptySource() => VerifyCSharpByConvention();
         [Fact] public void Argument() => VerifyCSharpByConvention();
+        [Fact] public void Return() => VerifyCSharpByConvention();
         [Fact] public void Conversion() => VerifyCSharpByConvention();
         [Fact] public void Assignment() => VerifyCSharpByConvention();
         [Fact] public void SymbolInitialize() => VerifyCSharpByConvention();
@@ -17,6 +18,7 @@ namespace NonCopyable.Test
         [Fact] public void Operator() => VerifyCSharpByConvention();
         [Fact] public void ReadOnly() => VerifyCSharpByConvention();
         [Fact] public void Annotations() => VerifyCSharpByConvention();
+        [Fact] public void This() => VerifyCSharpByConvention();
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new NonCopyableAnalyzer();
     }
