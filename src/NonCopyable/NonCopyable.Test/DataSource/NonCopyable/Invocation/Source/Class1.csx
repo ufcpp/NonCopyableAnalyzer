@@ -32,12 +32,12 @@ class Program
     {
         var c = new Counter();
         c.M();
-        c.MVal();
+        c.MVal(); // ❌
         c.MRef();
         c.MIn();
-        var w = c.M() + c.MVal() + c.MRef() + c.MIn();
-        var x = c.MVal() + c.M() + c.MRef() + c.MIn();
-        var y = c.MVal() + c.MRef() + c.M() + c.MIn();
-        var z = c.MVal() + c.MRef() + c.MIn() + c.M();
+        var w = c.M() + c.MVal() + c.MRef() + c.MIn(); // ❌
+        var x = c.MVal() + c.M() + c.MRef() + c.MIn(); // ❌
+        var y = c.MVal() + c.MRef() + c.M() + c.MIn(); // ❌
+        var z = c.MVal() + c.MRef() + c.MIn() + c.M(); // ❌
     }
 }

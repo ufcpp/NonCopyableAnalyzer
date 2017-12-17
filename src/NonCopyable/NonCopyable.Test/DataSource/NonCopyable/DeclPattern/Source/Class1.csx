@@ -23,11 +23,11 @@ class Program
     {
         var c = new Counter();
 
-        if (c is Counter c1) { }
+        if (c is Counter c1) { } // ❌
 
         switch (c)
         {
-            case Counter c2:
+            case Counter c2: // ❌
                 break;
         }
     }

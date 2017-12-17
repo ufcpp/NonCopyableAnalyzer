@@ -33,8 +33,8 @@ class Program
         var v1 = _c.Value;
         _c.M();
 
-        var v2 = _ro.Value;
-        _ro.M();
+        var v2 = _ro.Value; // ❌
+        _ro.M(); // ❌
 
         ref var r = ref c;
 
@@ -43,16 +43,16 @@ class Program
 
         ref readonly var ro = ref c;
 
-        var v4 = ro.Value;
-        ro.M();
+        var v4 = ro.Value; // ❌
+        ro.M(); // ❌
 
-        Action a = c.M;
+        Action a = c.M; // ❌
     }
 
     static void MIn(in Counter ro)
     {
-        var v = ro.Value;
-        ro.M();
+        var v = ro.Value; // ❌
+        ro.M(); // ❌
     }
 
     static void MRef(ref Counter r)

@@ -24,19 +24,19 @@ class Program
         var c1 = new Counter();
         Counter c2 = new Counter();
         Counter c3 = default(Counter);
-        var c4 = c1;
-        Counter c5 = c1;
+        var c4 = c1; // ❌
+        Counter c5 = c1; // ❌
     }
 
     static Counter _c1 = new Counter();
     static Counter _c2 = default;
-    Counter _c3 = _c1;
+    Counter _c3 = _c1; // ❌
 
     static void X(Counter c1 = default(Counter), Counter c2 = default, Counter c3 = new Counter()) { }
 
-    public Counter C1 { get; } = _c1;
-    public Counter C2 { get; set; } = _c1;
-    public Counter C3 { get; private set; } = _c1;
+    public Counter C1 { get; } = _c1; // ❌
+    public Counter C2 { get; set; } = _c1; // ❌
+    public Counter C3 { get; private set; } = _c1; // ❌
     public Counter C4 { get; } = new Counter();
     public Counter C5 { get; set; } = default(Counter);
     public Counter C6 { get; private set; } = default;

@@ -25,17 +25,17 @@ class Program
         Counter c2 = new Counter();
 
         Counter c3;
-        c3 = c1;
-        c1 = c2;
+        c3 = c1; // ❌
+        c1 = c2; // ❌
         c2 = new Counter();
 
-        var t = (c1, new Counter(), c2);
-        var (x, y) = (new Counter(), c1);
+        var t = (c1, new Counter(), c2); // ❌
+        var (x, y) = (new Counter(), c1); // ❌
     }
 
     static void M(ref Counter i, out Counter o)
     {
         o = new Counter();
-        o = i;
+        o = i; // ❌
     }
 }

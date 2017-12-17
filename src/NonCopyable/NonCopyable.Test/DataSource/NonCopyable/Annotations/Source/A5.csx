@@ -3,7 +3,7 @@
     static void Main()
     {
         var c1 = new A5();
-        var c2 = c1;
+        var c2 = c1; // ❌
     }
 }
 

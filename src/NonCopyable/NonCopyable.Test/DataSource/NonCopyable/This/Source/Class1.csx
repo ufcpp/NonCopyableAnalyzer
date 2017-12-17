@@ -16,17 +16,17 @@ struct Counter
     public void Count() => ++_i;
     public int Value => _i;
 
-    public Counter Clone1() => this;
-    public Counter Clone2() { return this; }
+    public Counter Clone1() => this; // ❌
+    public Counter Clone2() { return this; } // ❌
 
     public IEnumerable<Counter> Clone3()
     {
         yield return new Counter();
-        yield return this;
+        yield return this; // ❌
         yield return new Counter();
     }
 
-    public void Set(in Counter c) => this = c;
+    public void Set(in Counter c) => this = c; // ❌
     public void Reset() => this = new Counter();
 }
 

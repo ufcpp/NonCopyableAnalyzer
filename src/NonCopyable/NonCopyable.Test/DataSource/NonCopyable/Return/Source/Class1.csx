@@ -30,13 +30,13 @@ struct Counter
 class Program
 {
     static Counter _c = new Counter();
-    public static Counter Create1() => _c;
-    public static Counter Create2() { return _c; }
+    public static Counter Create1() => _c; // ❌
+    public static Counter Create2() { return _c; } // ❌
 
     public static IEnumerable<Counter> Create3()
     {
         yield return new Counter();
-        yield return _c;
+        yield return _c; // ❌
         yield return new Counter();
     }
 
@@ -50,7 +50,7 @@ class Program
         var c3 = Create3();
 
         var c4 = Enumerable.Range(0, 5).Select(_ => new Counter());
-        var c5 = Enumerable.Range(0, 5).Select(_ => _c);
+        var c5 = Enumerable.Range(0, 5).Select(_ => _c); // ❌
 
         var r = ref Ref();
         var v = Ref();

@@ -26,31 +26,31 @@ class Program
         var a = new List<Counter>
         {
             new Counter(),
-            c,
+            c, // ❌
         };
 
         var b = new Dictionary<Counter, int>
         {
             { new Counter(), 1 },
-            { c, 2 },
+            { c, 2 }, // ❌
         };
 
         var c = new[]
         {
             new Counter(),
-            c,
+            c, // ❌
         };
 
         var d = new List<Counter>
         {
             [0] = new Counter(),
-            [1] = c,
+            [1] = c, // ❌
         };
 
         var e = new X
         {
             A = new Counter(),
-            B = c,
+            B = c, // ❌
         };
     }
 }

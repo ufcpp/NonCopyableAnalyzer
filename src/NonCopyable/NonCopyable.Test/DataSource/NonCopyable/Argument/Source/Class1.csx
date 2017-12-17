@@ -26,7 +26,7 @@ class Program
     static void Main()
     {
         var c = new Counter();
-        Val(c);
+        Val(c); // ❌
         Val(new Counter());
         In(c);
         In(in c);

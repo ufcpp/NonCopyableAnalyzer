@@ -24,7 +24,7 @@ class OtherClass
 
 struct OtherStruct
 {
-    Counter _c;
+    Counter _c; // ❌
 }
 
 [NonCopyable]
