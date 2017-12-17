@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Collections.Immutable;
 
 namespace NonCopyable
 {
@@ -8,13 +9,14 @@ namespace NonCopyable
         public static bool IsNonCopyable(this ITypeSymbol t)
         {
             if (t == null) return false;
-            if (!t.IsValueType) return false;
+            if (t.TypeKind != TypeKind.Struct && t.TypeKind != TypeKind.TypeParameter) return false;
 
             foreach (var decl in t.DeclaringSyntaxReferences)
             {
-                if (!(decl.GetSyntax() is StructDeclarationSyntax s)) return false;
+                var list = decl.GetSyntax().GetAttributes();
+                if (list.Count == 0) return false;
 
-                foreach (var al in s.AttributeLists)
+                foreach (var al in list)
                 {
                     foreach (var a in al.Attributes)
                     {
@@ -25,6 +27,19 @@ namespace NonCopyable
             }
 
             return false;
+        }
+
+        private static SyntaxList<AttributeListSyntax> GetAttributes(this SyntaxNode syntax)
+        {
+            switch (syntax)
+            {
+                case StructDeclarationSyntax s:
+                    return s.AttributeLists;
+                case TypeParameterSyntax s:
+                    return s.AttributeLists;
+                default:
+                    return default;
+            }
         }
     }
 }

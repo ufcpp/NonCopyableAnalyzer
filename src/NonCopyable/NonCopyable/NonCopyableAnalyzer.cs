@@ -122,7 +122,8 @@ namespace NonCopyable
                 {
                     // instance method should not be invoked with in parameter/ref readonly local/readonly field
                     var op = (IInvocationOperation)oc.Operation;
-                    if (op.TargetMethod.IsStatic) return;
+
+                    CheckGenericConstraints(oc, op);
                     CheckInstanceReadonly(oc, op.Instance);
 
                 }, OperationKind.Invocation);
@@ -150,6 +151,25 @@ namespace NonCopyable
             //    OperationKind.CompoundAssignment,
             //    OperationKind.UnaryOperator,
             //    OperationKind.BinaryOperator,
+        }
+
+        private static void CheckGenericConstraints(OperationAnalysisContext oc, IInvocationOperation op)
+        {
+            var m = op.TargetMethod;
+
+            if (m.IsGenericMethod)
+            {
+                var parameters = m.TypeParameters;
+                var arguments = m.TypeArguments;
+                for (int i = 0; i < parameters.Length; i++)
+                {
+                    var p = parameters[i];
+                    var a = arguments[i];
+
+                    if (a.IsNonCopyable() && !p.IsNonCopyable())
+                        oc.ReportDiagnostic(Diagnostic.Create(Rule, op.Syntax.GetLocation(), a.Name));
+                }
+            }
         }
 
         private static void CheckInstanceReadonly(OperationAnalysisContext oc, IOperation instance)
