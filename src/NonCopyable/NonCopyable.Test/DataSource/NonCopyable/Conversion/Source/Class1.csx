@@ -9,12 +9,12 @@ using System.Diagnostics;
 internal class NonCopyableAttribute : Attribute { }
 
 [NonCopyable]
-struct Counter
+struct Counter : IDisposable
 {
     private int _i;
     public Counter(int i) => _i = i;
     public void Count() => ++_i;
-    public int Value => _i;
+    public void Dispose() { }
 }
 
 class Program
@@ -37,5 +37,7 @@ class Program
         (object x, int i) = (new Counter(), 1); // ❌
 
         var s = "" + c; // ❌
+
+        IDisposable d = c; // ❌
     }
 }

@@ -22,6 +22,7 @@ namespace NonCopyable.Test
         [Fact] public void This() => VerifyCSharpByConvention();
         [Fact] public void Nest() => VerifyCSharpByConvention();
         [Fact] public void Generics() => VerifyCSharpByConvention();
+        [Fact] public void Interface() => VerifyCSharpByConvention();
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new NonCopyableAnalyzer();
     }

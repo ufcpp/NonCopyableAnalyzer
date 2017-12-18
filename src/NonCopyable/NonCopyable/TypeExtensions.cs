@@ -12,19 +12,33 @@ namespace NonCopyable
             if (t == null) return false;
             if (t.TypeKind != TypeKind.Struct && t.TypeKind != TypeKind.TypeParameter) return false;
 
-            foreach (var decl in t.DeclaringSyntaxReferences)
-            {
-                var list = decl.GetSyntax().GetAttributes();
-                if (list.Count == 0) return false;
+            if (HasNonCopyableAttribute(t)) return true;
 
-                foreach (var al in list)
+            if (t.TypeKind == TypeKind.Struct)
+            {
+                foreach (var ifType in t.AllInterfaces)
                 {
-                    foreach (var a in al.Attributes)
-                    {
-                        var str = a.ToString();
-                        if (str.EndsWith("NonCopyable") || str.EndsWith("NonCopyableAttribute")) return true;
-                    }
+                    if (HasNonCopyableAttribute(ifType)) return true;
                 }
+            }
+            else
+            {
+                foreach (var constraint in ((ITypeParameterSymbol)t).ConstraintTypes)
+                {
+                    if (HasNonCopyableAttribute(constraint)) return true;
+                }
+
+            }
+
+            return false;
+        }
+
+        private static bool HasNonCopyableAttribute(ITypeSymbol t)
+        {
+            foreach (var a in t.GetAttributes())
+            {
+                var str = a.AttributeClass.Name;
+                if (str.EndsWith("NonCopyable") || str.EndsWith("NonCopyableAttribute")) return true;
             }
 
             return false;

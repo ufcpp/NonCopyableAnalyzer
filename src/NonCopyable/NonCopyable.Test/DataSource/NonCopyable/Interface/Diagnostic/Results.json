@@ -1,0 +1,26 @@
+﻿[
+  {
+    "id": "NoCopy",
+    "sevirity": "Error",
+    "line": 23,
+    "column": 17,
+    "path": "Class1.csx",
+    "message-args": [ "T" ]
+  },
+  {
+    "id": "NoCopy",
+    "sevirity": "Error",
+    "line": 29,
+    "column": 18,
+    "path": "Class1.csx",
+    "message-args": [ "S1" ]
+  },
+  {
+    "id": "NoCopy",
+    "sevirity": "Error",
+    "line": 33,
+    "column": 18,
+    "path": "Class1.csx",
+    "message-args": [ "S2" ]
+  }
+]
