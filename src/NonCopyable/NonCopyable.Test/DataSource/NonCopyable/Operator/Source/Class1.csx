@@ -26,7 +26,7 @@ struct Counter
     public static bool operator !(in Counter x) => true;
 }
 
-class Program
+class Class1
 {
     static void Main()
     {
