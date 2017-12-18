@@ -220,35 +220,8 @@ namespace NonCopyable
         {
             var t = v.Type;
             if (!t.IsNonCopyable()) return;
-            if (AllowsCopy(v)) return;
+            if (v.CanCopy()) return;
             oc.ReportDiagnostic(Diagnostic.Create(Rule, v.Syntax.GetLocation(), t.Name));
-        }
-
-        private static bool AllowsCopy(IOperation op)
-        {
-            var k = op.Kind;
-
-            if(k == OperationKind.Conversion)
-            {
-                var operandKind = ((IConversionOperation)op).Operand.Kind;
-                // default literal (invalid if LangVersion < 7.1)
-                if (operandKind == OperationKind.DefaultValue || operandKind == OperationKind.Invalid) return true;
-            }
-
-            if (k == OperationKind.LocalReference || k == OperationKind.FieldReference || k == OperationKind.PropertyReference)
-            {
-                //need help: how to get ref-ness from IOperation?
-                var parent = op.Syntax.Parent.Kind();
-                if (parent == SyntaxKind.RefExpression) return true;
-            }
-
-            return k == OperationKind.ObjectCreation
-                || k == OperationKind.DefaultValue
-                || k == OperationKind.Literal
-                || k == OperationKind.Invocation;
-
-            //todo: should return value be OK?
-            //todo: move semantics
         }
     }
 }

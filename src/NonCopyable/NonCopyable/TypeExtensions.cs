@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Immutable;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace NonCopyable
 {
@@ -40,6 +41,36 @@ namespace NonCopyable
                 default:
                     return default;
             }
+        }
+
+        /// <summary>
+        /// test whether op is copyable or not even when it is a non-copyable instance.
+        /// </summary>
+        public static bool CanCopy(this IOperation op)
+        {
+            var k = op.Kind;
+
+            if (k == OperationKind.Conversion)
+            {
+                var operandKind = ((IConversionOperation)op).Operand.Kind;
+                // default literal (invalid if LangVersion < 7.1)
+                if (operandKind == OperationKind.DefaultValue || operandKind == OperationKind.Invalid) return true;
+            }
+
+            if (k == OperationKind.LocalReference || k == OperationKind.FieldReference || k == OperationKind.PropertyReference)
+            {
+                //need help: how to get ref-ness from IOperation?
+                var parent = op.Syntax.Parent.Kind();
+                if (parent == SyntaxKind.RefExpression) return true;
+            }
+
+            return k == OperationKind.ObjectCreation
+                || k == OperationKind.DefaultValue
+                || k == OperationKind.Literal
+                || k == OperationKind.Invocation;
+
+            //todo: should return value be OK?
+            //todo: move semantics
         }
     }
 }
