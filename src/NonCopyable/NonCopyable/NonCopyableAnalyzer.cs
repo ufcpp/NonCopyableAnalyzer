@@ -153,7 +153,7 @@ namespace NonCopyable
             //    OperationKind.BinaryOperator,
         }
 
-        private static void CheckGenericConstraints(OperationAnalysisContext oc, IInvocationOperation op)
+        private static void CheckGenericConstraints(in OperationAnalysisContext oc, IInvocationOperation op)
         {
             var m = op.TargetMethod;
 
@@ -172,7 +172,7 @@ namespace NonCopyable
             }
         }
 
-        private static void CheckInstanceReadonly(OperationAnalysisContext oc, IOperation instance)
+        private static void CheckInstanceReadonly(in OperationAnalysisContext oc, IOperation instance)
         {
             if (instance == null) return;
 
@@ -216,7 +216,7 @@ namespace NonCopyable
             return false;
         }
 
-        private static void CheckCopyability(OperationAnalysisContext oc, IOperation v)
+        private static void CheckCopyability(in OperationAnalysisContext oc, IOperation v)
         {
             var t = v.Type;
             if (!t.IsNonCopyable()) return;
