@@ -9,14 +9,23 @@ namespace NonCopyable
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class NonCopyableAnalyzer : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "NoCopy";
-        internal const string Title = "non-copyable";
-        internal const string MessageFormat = "The type '{0}' is non-copyable";
-        internal const string Category = "Correction";
+        private static DiagnosticDescriptor CreateRule(int num, string type)
+            => new DiagnosticDescriptor("NoCopy" + num.ToString("00"), "non-copyable", "🚫 " + type + ". '{0}' is non-copyable.", "Correction", DiagnosticSeverity.Error, isEnabledByDefault: true);
 
-        private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Error, isEnabledByDefault: true);
+        private static DiagnosticDescriptor FieldDeclarationRule = CreateRule(1, "field declaration");
+        private static DiagnosticDescriptor InitializerRule = CreateRule(2, "initializer");
+        private static DiagnosticDescriptor AssignmentRule = CreateRule(3, "assignment");
+        private static DiagnosticDescriptor ArgumentRule = CreateRule(4, "argument");
+        private static DiagnosticDescriptor ReturnRule = CreateRule(5, "return");
+        private static DiagnosticDescriptor ConversionRule = CreateRule(6, "conversion");
+        private static DiagnosticDescriptor PatternRule = CreateRule(7, "pattern matching");
+        private static DiagnosticDescriptor TupleRule = CreateRule(8, "tuple");
+        private static DiagnosticDescriptor MemberRule = CreateRule(9, "member reference");
+        private static DiagnosticDescriptor ReadOnlyInvokeRule = CreateRule(10, "readonly invoke");
+        private static DiagnosticDescriptor GenericConstraintRule = CreateRule(11, "generic constraint");
+        private static DiagnosticDescriptor DelegateRule = CreateRule(12, "delegate");
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rule); } }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(FieldDeclarationRule, InitializerRule, AssignmentRule, ArgumentRule, ReturnRule, ConversionRule, PatternRule, TupleRule, MemberRule, ReadOnlyInvokeRule, GenericConstraintRule, DelegateRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -25,7 +34,7 @@ namespace NonCopyable
                 csc.RegisterOperationAction(oc =>
                 {
                     var op = (ISymbolInitializerOperation)oc.Operation;
-                    CheckCopyability(oc, op.Value);
+                    CheckCopyability(oc, op.Value, InitializerRule);
                 }, OperationKind.FieldInitializer,
                 OperationKind.ParameterInitializer,
                 OperationKind.PropertyInitializer,
@@ -37,7 +46,7 @@ namespace NonCopyable
                     // including collection element initializer
                     var op = (ISimpleAssignmentOperation)oc.Operation;
                     if (op.IsRef) return;
-                    CheckCopyability(oc, op.Value);
+                    CheckCopyability(oc, op.Value, AssignmentRule);
                 }, OperationKind.SimpleAssignment);
 
                 csc.RegisterOperationAction(oc =>
@@ -45,13 +54,13 @@ namespace NonCopyable
                     // including non-ref extension method invocation
                     var op = (IArgumentOperation)oc.Operation;
                     if (op.Parameter.RefKind != RefKind.None) return;
-                    CheckCopyability(oc, op.Value);
+                    CheckCopyability(oc, op.Value, ArgumentRule);
                 }, OperationKind.Argument);
 
                 csc.RegisterOperationAction(oc =>
                 {
                     var op = (IReturnOperation)oc.Operation;
-                    CheckCopyability(oc, op.ReturnedValue);
+                    CheckCopyability(oc, op.ReturnedValue, ReturnRule);
                 }, OperationKind.Return,
                 OperationKind.YieldReturn);
 
@@ -62,7 +71,7 @@ namespace NonCopyable
                     if (v.Kind == OperationKind.DefaultValue) return;
                     var t = v.Type;
                     if (!t.IsNonCopyable()) return;
-                    oc.ReportDiagnostic(Diagnostic.Create(Rule, v.Syntax.GetLocation(), t.Name));
+                    oc.ReportDiagnostic(Diagnostic.Create(ConversionRule, v.Syntax.GetLocation(), t.Name));
                 }, OperationKind.Conversion);
 
                 csc.RegisterOperationAction(oc =>
@@ -73,7 +82,7 @@ namespace NonCopyable
 
                     foreach (var v in op.ElementValues)
                     {
-                        CheckCopyability(oc, v);
+                        CheckCopyability(oc, v, InitializerRule);
                     }
                 }, OperationKind.ArrayInitializer);
 
@@ -85,7 +94,7 @@ namespace NonCopyable
 
                     foreach (var a in op.Arguments)
                     {
-                        CheckCopyability(oc, a);
+                        CheckCopyability(oc, a, InitializerRule);
                     }
                 }, OperationKind.CollectionElementInitializer);
 
@@ -94,7 +103,7 @@ namespace NonCopyable
                     var op = (IDeclarationPatternOperation)oc.Operation;
                     var t = ((ILocalSymbol)op.DeclaredSymbol).Type;
                     if (!t.IsNonCopyable()) return;
-                    oc.ReportDiagnostic(Diagnostic.Create(Rule, op.Syntax.GetLocation(), t.Name));
+                    oc.ReportDiagnostic(Diagnostic.Create(PatternRule, op.Syntax.GetLocation(), t.Name));
                 }, OperationKind.DeclarationPattern);
 
                 csc.RegisterOperationAction(oc =>
@@ -106,7 +115,7 @@ namespace NonCopyable
 
                     foreach (var v in op.Elements)
                     {
-                        CheckCopyability(oc, v);
+                        CheckCopyability(oc, v, TupleRule);
                     }
                 }, OperationKind.Tuple);
 
@@ -114,7 +123,7 @@ namespace NonCopyable
                 {
                     // instance property/event should not be referenced with in parameter/ref readonly local/readonly field
                     var op = (IMemberReferenceOperation)oc.Operation;
-                    CheckInstanceReadonly(oc, op.Instance);
+                    CheckInstanceReadonly(oc, op.Instance, MemberRule);
                 }, OperationKind.PropertyReference,
                 OperationKind.EventReference);
 
@@ -123,8 +132,8 @@ namespace NonCopyable
                     // instance method should not be invoked with in parameter/ref readonly local/readonly field
                     var op = (IInvocationOperation)oc.Operation;
 
-                    CheckGenericConstraints(oc, op);
-                    CheckInstanceReadonly(oc, op.Instance);
+                    CheckGenericConstraints(oc, op, GenericConstraintRule);
+                    CheckInstanceReadonly(oc, op.Instance, ReadOnlyInvokeRule);
 
                 }, OperationKind.Invocation);
 
@@ -133,7 +142,7 @@ namespace NonCopyable
                     // delagate creation
                     var op = (IMemberReferenceOperation)oc.Operation;
                     if (!op.Instance.Type.IsNonCopyable()) return;
-                    oc.ReportDiagnostic(Diagnostic.Create(Rule, op.Instance.Syntax.GetLocation(), op.Instance.Type.Name));
+                    oc.ReportDiagnostic(Diagnostic.Create(DelegateRule, op.Instance.Syntax.GetLocation(), op.Instance.Type.Name));
                 }, OperationKind.MethodReference);
 
                 csc.RegisterSymbolAction(sac =>
@@ -143,7 +152,7 @@ namespace NonCopyable
                     if (!f.Type.IsNonCopyable()) return;
                     if (f.ContainingType.IsReferenceType) return;
                     if (f.ContainingType.IsNonCopyable()) return;
-                    sac.ReportDiagnostic(Diagnostic.Create(Rule, f.DeclaringSyntaxReferences[0].GetSyntax().GetLocation(), f.Type.Name));
+                    sac.ReportDiagnostic(Diagnostic.Create(FieldDeclarationRule, f.DeclaringSyntaxReferences[0].GetSyntax().GetLocation(), f.Type.Name));
                 }, SymbolKind.Field);
             });
 
@@ -153,7 +162,7 @@ namespace NonCopyable
             //    OperationKind.BinaryOperator,
         }
 
-        private static void CheckGenericConstraints(in OperationAnalysisContext oc, IInvocationOperation op)
+        private static void CheckGenericConstraints(in OperationAnalysisContext oc, IInvocationOperation op, DiagnosticDescriptor rule)
         {
             var m = op.TargetMethod;
 
@@ -167,12 +176,12 @@ namespace NonCopyable
                     var a = arguments[i];
 
                     if (a.IsNonCopyable() && !p.IsNonCopyable())
-                        oc.ReportDiagnostic(Diagnostic.Create(Rule, op.Syntax.GetLocation(), a.Name));
+                        oc.ReportDiagnostic(Diagnostic.Create(rule, op.Syntax.GetLocation(), a.Name));
                 }
             }
         }
 
-        private static void CheckInstanceReadonly(in OperationAnalysisContext oc, IOperation instance)
+        private static void CheckInstanceReadonly(in OperationAnalysisContext oc, IOperation instance, DiagnosticDescriptor rule)
         {
             if (instance == null) return;
 
@@ -181,7 +190,7 @@ namespace NonCopyable
 
             if (IsInstanceReadonly(instance))
             {
-                oc.ReportDiagnostic(Diagnostic.Create(Rule, instance.Syntax.GetLocation(), t.Name));
+                oc.ReportDiagnostic(Diagnostic.Create(rule, instance.Syntax.GetLocation(), t.Name));
             }
         }
 
@@ -216,12 +225,12 @@ namespace NonCopyable
             return false;
         }
 
-        private static void CheckCopyability(in OperationAnalysisContext oc, IOperation v)
+        private static void CheckCopyability(in OperationAnalysisContext oc, IOperation v, DiagnosticDescriptor rule)
         {
             var t = v.Type;
             if (!t.IsNonCopyable()) return;
             if (v.CanCopy()) return;
-            oc.ReportDiagnostic(Diagnostic.Create(Rule, v.Syntax.GetLocation(), t.Name));
+            oc.ReportDiagnostic(Diagnostic.Create(rule, v.Syntax.GetLocation(), t.Name));
         }
     }
 }

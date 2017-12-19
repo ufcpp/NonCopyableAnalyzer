@@ -1,6 +1,6 @@
 ﻿[
   {
-    "id": "NoCopy",
+    "id": "NoCopy02",
     "sevirity": "Error",
     "line": 6,
     "column": 18,
@@ -8,7 +8,7 @@
     "message-args": [ "A1" ]
   },
   {
-    "id": "NoCopy",
+    "id": "NoCopy02",
     "sevirity": "Error",
     "line": 6,
     "column": 18,
@@ -16,7 +16,7 @@
     "message-args": [ "A2" ]
   },
   {
-    "id": "NoCopy",
+    "id": "NoCopy02",
     "sevirity": "Error",
     "line": 8,
     "column": 22,
@@ -24,7 +24,7 @@
     "message-args": [ "A3" ]
   },
   {
-    "id": "NoCopy",
+    "id": "NoCopy02",
     "sevirity": "Error",
     "line": 6,
     "column": 18,
@@ -32,7 +32,7 @@
     "message-args": [ "A4" ]
   },
   {
-    "id": "NoCopy",
+    "id": "NoCopy02",
     "sevirity": "Error",
     "line": 6,
     "column": 18,
@@ -40,7 +40,7 @@
     "message-args": [ "A5" ]
   },
   {
-    "id": "NoCopy",
+    "id": "NoCopy02",
     "sevirity": "Error",
     "line": 8,
     "column": 22,
@@ -48,7 +48,7 @@
     "message-args": [ "A6" ]
   },
   {
-    "id": "NoCopy",
+    "id": "NoCopy02",
     "sevirity": "Error",
     "line": 6,
     "column": 18,
@@ -56,7 +56,7 @@
     "message-args": [ "A7" ]
   },
   {
-    "id": "NoCopy",
+    "id": "NoCopy02",
     "sevirity": "Error",
     "line": 8,
     "column": 18,

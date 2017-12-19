@@ -1,6 +1,6 @@
 ﻿[
   {
-    "id": "NoCopy",
+    "id": "NoCopy07",
     "sevirity": "Error",
     "line": 26,
     "column": 18,
@@ -8,7 +8,7 @@
     "message-args": [ "Counter" ]
   },
   {
-    "id": "NoCopy",
+    "id": "NoCopy07",
     "sevirity": "Error",
     "line": 30,
     "column": 18,

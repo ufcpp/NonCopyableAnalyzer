@@ -1,6 +1,6 @@
 ﻿[
   {
-    "id": "NoCopy",
+    "id": "NoCopy05",
     "sevirity": "Error",
     "line": 26,
     "column": 42,
@@ -8,7 +8,7 @@
     "message-args": [ "Counter" ]
   },
   {
-    "id": "NoCopy",
+    "id": "NoCopy02",
     "sevirity": "Error",
     "line": 31,
     "column": 19,
@@ -16,7 +16,7 @@
     "message-args": [ "Counter" ]
   },
   {
-    "id": "NoCopy",
+    "id": "NoCopy02",
     "sevirity": "Error",
     "line": 32,
     "column": 19,
@@ -24,7 +24,7 @@
     "message-args": [ "Counter" ]
   },
   {
-    "id": "NoCopy",
+    "id": "NoCopy02",
     "sevirity": "Error",
     "line": 33,
     "column": 18,
@@ -32,7 +32,7 @@
     "message-args": [ "Counter" ]
   },
   {
-    "id": "NoCopy",
+    "id": "NoCopy02",
     "sevirity": "Error",
     "line": 34,
     "column": 18,
