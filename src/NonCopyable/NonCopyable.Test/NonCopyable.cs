@@ -1,4 +1,6 @@
-﻿using Microsoft.CodeAnalysis.Diagnostics;
+﻿using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
 using TestHelper;
 using Xunit;
 
@@ -23,7 +25,17 @@ namespace NonCopyable.Test
         [Fact] public void Nest() => VerifyCSharpByConvention();
         [Fact] public void Generics() => VerifyCSharpByConvention();
         [Fact] public void Interface() => VerifyCSharpByConvention();
+        [Fact] public void DifferentAssembly() => VerifyCSharpByConvention();
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new NonCopyableAnalyzer();
+
+        protected override IEnumerable<MetadataReference> References
+        {
+            get
+            {
+                foreach (var r in base.References) yield return r;
+                yield return MetadataReference.CreateFromFile(GetType().Assembly.Location);
+            }
+        }
     }
 }
