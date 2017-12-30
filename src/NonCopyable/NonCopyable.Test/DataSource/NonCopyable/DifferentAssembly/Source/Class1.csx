@@ -6,6 +6,9 @@ class Class1
     {
         var x1 = new X();
         X x2 = x1;
+
+        var y1 = new MyNonCopyable();
+        var y2 = y1;
     }
 }
 

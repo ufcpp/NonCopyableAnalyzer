@@ -6,5 +6,13 @@
     "column": 16,
     "path": "Class1.csx",
     "message-args": [ "X" ]
+  },
+  {
+    "id": "NoCopy02",
+    "sevirity": "Error",
+    "line": 11,
+    "column": 18,
+    "path": "Class1.csx",
+    "message-args": [ "MyNonCopyable" ]
   }
 ]
