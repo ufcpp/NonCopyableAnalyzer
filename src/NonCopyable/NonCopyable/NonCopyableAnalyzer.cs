@@ -71,6 +71,14 @@ namespace NonCopyable
                     if (v.Kind == OperationKind.DefaultValue) return;
                     var t = v.Type;
                     if (!t.IsNonCopyable()) return;
+
+                    if (op.Parent is IForEachLoopOperation &&
+                        op == ((IForEachLoopOperation)op.Parent).Collection &&
+                        op.Conversion.IsIdentity)
+                    {
+                        return; 
+                    }
+
                     oc.ReportDiagnostic(Diagnostic.Create(ConversionRule, v.Syntax.GetLocation(), t.Name));
                 }, OperationKind.Conversion);
 
