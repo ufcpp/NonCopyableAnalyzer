@@ -83,6 +83,14 @@
     "id": "NoCopy06",
     "sevirity": "Error",
     "line": 40,
+    "column": 43,
+    "path": "Class2.csx",
+    "message-args": [ "Collection" ]
+  },
+  {
+    "id": "NoCopy06",
+    "sevirity": "Error",
+    "line": 41,
     "column": 44,
     "path": "Class2.csx",
     "message-args": [ "Collection" ]

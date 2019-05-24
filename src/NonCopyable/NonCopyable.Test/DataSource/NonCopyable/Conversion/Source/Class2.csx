@@ -37,6 +37,7 @@ class Program
         var e = collection.GetEnumerator();
         while(e.MoveNext()) Consume(e.Current);
         foreach(var i in collection) Consume(i);
+        foreach(var i in (Collection<int>)collection) Consume(i); // ❌        
         foreach(var i in (IEnumerable<int>)collection) Consume(i); // ❌        
     }
 }
