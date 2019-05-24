@@ -83,7 +83,7 @@
     "id": "NoCopy06",
     "sevirity": "Error",
     "line": 40,
-    "column": 25,
+    "column": 44,
     "path": "Class2.csx",
     "message-args": [ "Collection" ]
   }
