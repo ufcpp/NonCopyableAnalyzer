@@ -4,7 +4,7 @@
         <Identity Id="NonCopyable.1dd1f7a7-7947-4aa7-84c7-29edee95a0fa" Version="0.1" Language="en-US" Publisher="Nobuyuki Iwanaga"/>
         <DisplayName>NonCopyable</DisplayName>
         <Description xml:space="preserve">An analyzer for Non-Copyable structs.</Description>
-        <License>https://github.com/ufcpp/NonCopyableAnalyzer/blob/master/LICENSE</License>
+        <License>LICENSE</License>
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0,)" />
@@ -17,7 +17,7 @@
         <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="NonCopyable" Path="|NonCopyable|"/>
     </Assets>
     <Prerequisites>
-        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0,16.0)" DisplayName="Visual Studio core editor" />
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[16.0,17.0)" DisplayName="Visual Studio core editor" />
         <Prerequisite Id="Microsoft.VisualStudio.Component.Roslyn.LanguageServices" Version="[15.0,16.0)" DisplayName="Roslyn Language Services" />
     </Prerequisites>
 </PackageManifest>
