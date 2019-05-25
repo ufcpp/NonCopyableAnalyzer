@@ -30,7 +30,7 @@ struct Counter
 class Program
 {
     static Counter _c = new Counter();
-    static Counter _ca = new Counter[1];
+    static Counter[] _ca = new Counter[1];
     public static Counter Create1() => _c; // ❌
     public static Counter Create2() { return _c; } // ❌
 
@@ -54,10 +54,10 @@ class Program
         var c5 = Enumerable.Range(0, 5).Select(_ => _c); // ❌
 
         var r = ref Ref();
-        var v = Ref(); // ❌
+        var v = Ref();
         
         var r = ref ArrayRef();
-        var v = ArrayRef(); // ❌
+        var v = ArrayRef();
     }
 
     public static ref Counter Ref() { return ref _c; }
