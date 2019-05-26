@@ -27,6 +27,7 @@ namespace NonCopyable.Test
         [Fact] public void Interface() => VerifyCSharpByConvention();
         [Fact] public void DifferentAssembly() => VerifyCSharpByConvention();
         [Fact] public void VoidReturn() => VerifyCSharpByConvention();
+        [Fact] public void Delegate() => VerifyCSharpByConvention();
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new NonCopyableAnalyzer();
 
