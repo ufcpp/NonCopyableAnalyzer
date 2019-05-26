@@ -2,7 +2,7 @@
   {
     "id": "NoCopy05",
     "sevirity": "Error",
-    "line": 33,
+    "line": 34,
     "column": 40,
     "path": "Class1.csx",
     "message-args": [ "Counter" ]
@@ -10,7 +10,7 @@
   {
     "id": "NoCopy05",
     "sevirity": "Error",
-    "line": 34,
+    "line": 35,
     "column": 46,
     "path": "Class1.csx",
     "message-args": [ "Counter" ]
@@ -18,7 +18,7 @@
   {
     "id": "NoCopy05",
     "sevirity": "Error",
-    "line": 39,
+    "line": 40,
     "column": 22,
     "path": "Class1.csx",
     "message-args": [ "Counter" ]
@@ -26,9 +26,9 @@
   {
     "id": "NoCopy05",
     "sevirity": "Error",
-    "line": 53,
+    "line": 54,
     "column": 53,
     "path": "Class1.csx",
     "message-args": [ "Counter" ]
-  }
+  },
 ]

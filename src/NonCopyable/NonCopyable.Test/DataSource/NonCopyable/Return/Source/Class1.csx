@@ -30,6 +30,7 @@ struct Counter
 class Program
 {
     static Counter _c = new Counter();
+    static Counter[] _ca = new Counter[1];
     public static Counter Create1() => _c; // ❌
     public static Counter Create2() { return _c; } // ❌
 
@@ -54,7 +55,11 @@ class Program
 
         var r = ref Ref();
         var v = Ref();
+        
+        var r = ref ArrayRef();
+        var v = ArrayRef();
     }
 
     public static ref Counter Ref() { return ref _c; }
+    public static ref Counter ArrayRef() { return ref _ca[0]; }
 }

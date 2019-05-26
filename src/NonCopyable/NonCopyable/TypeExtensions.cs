@@ -71,7 +71,7 @@ namespace NonCopyable
                 if (operandKind == OperationKind.DefaultValue || operandKind == OperationKind.Invalid) return true;
             }
 
-            if (k == OperationKind.LocalReference || k == OperationKind.FieldReference || k == OperationKind.PropertyReference)
+            if (k == OperationKind.LocalReference || k == OperationKind.FieldReference || k == OperationKind.PropertyReference || k == OperationKind.ArrayElementReference)
             {
                 //need help: how to get ref-ness from IOperation?
                 var parent = op.Syntax.Parent.Kind();

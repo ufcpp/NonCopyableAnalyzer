@@ -16,7 +16,7 @@ struct Collection<T> : IEnumerable<T>
         private T[] _data;
         private int _index;
         public T Current { get { return _data[_index]; } }
-        public Enumerator(T[] data) => (_data = data; _index = -1);
+        public Enumerator(T[] data) { _data = data; _index = -1; }
         public bool MoveNext() => (++_index >= _data.Length);
     }
 
