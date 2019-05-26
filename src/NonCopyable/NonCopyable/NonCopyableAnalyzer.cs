@@ -60,6 +60,7 @@ namespace NonCopyable
                 csc.RegisterOperationAction(oc =>
                 {
                     var op = (IReturnOperation)oc.Operation;
+                    if (op.ReturnedValue == null) return;
                     CheckCopyability(oc, op.ReturnedValue, ReturnRule);
                 }, OperationKind.Return,
                 OperationKind.YieldReturn);
@@ -149,6 +150,7 @@ namespace NonCopyable
                 {
                     // delagate creation
                     var op = (IMemberReferenceOperation)oc.Operation;
+                    if (op.Instance == null) return;
                     if (!op.Instance.Type.IsNonCopyable()) return;
                     oc.ReportDiagnostic(Diagnostic.Create(DelegateRule, op.Instance.Syntax.GetLocation(), op.Instance.Type.Name));
                 }, OperationKind.MethodReference);
