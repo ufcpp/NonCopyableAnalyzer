@@ -39,5 +39,27 @@ class Program
         var s = "" + c; // ❌
 
         IDisposable d = c; // ❌
+
+        ConvertibleImplicitFromRef ir = c; // OK
+        ConvertibleImplicitFromVal iv = c; // ❌
+        var er = (ConvertibleExplicitFromRef)c; // OK
+        var ev = (ConvertibleExplicitFromVal)c; // ❌
     }
+}
+
+struct ConvertibleImplicitFromRef
+{
+    public static implicit operator ConvertibleImplicitFromRef(in Counter x) => default;
+}
+struct ConvertibleImplicitFromVal
+{
+    public static implicit operator ConvertibleImplicitFromVal(Counter x) => default;
+}
+struct ConvertibleExplicitFromRef
+{
+    public static explicit operator ConvertibleExplicitFromRef(in Counter x) => default;
+}
+struct ConvertibleExplicitFromVal
+{
+    public static explicit operator ConvertibleExplicitFromVal(Counter x) => default;
 }
