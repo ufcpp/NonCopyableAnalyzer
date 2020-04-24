@@ -73,6 +73,12 @@ namespace NonCopyable
                     var t = v.Type;
                     if (!t.IsNonCopyable()) return;
 
+                    if (op.OperatorMethod != null && op.OperatorMethod.Parameters.Length == 1)
+                    {
+                        var parameter = op.OperatorMethod.Parameters[0];
+                        if (parameter.RefKind != RefKind.None) return;
+                    }
+
                     if (op.Parent is IForEachLoopOperation &&
                         op == ((IForEachLoopOperation)op.Parent).Collection &&
                         op.Conversion.IsIdentity)
