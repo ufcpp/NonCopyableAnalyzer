@@ -62,4 +62,5 @@ class Program
 
     public static ref Counter Ref() { return ref _c; }
     public static ref Counter ArrayRef() { return ref _ca[0]; }
+    public static Counter CreateCond() => true ? new Counter() : default;
 }
