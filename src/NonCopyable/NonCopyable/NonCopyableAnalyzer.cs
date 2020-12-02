@@ -103,18 +103,6 @@ namespace NonCopyable
 
                 csc.RegisterOperationAction(oc =>
                 {
-                    var op = (ICollectionElementInitializerOperation)oc.Operation;
-
-                    if (!HasNonCopyableParameter(op.AddMethod)) return;
-
-                    foreach (var a in op.Arguments)
-                    {
-                        CheckCopyability(oc, a, InitializerRule);
-                    }
-                }, OperationKind.CollectionElementInitializer);
-
-                csc.RegisterOperationAction(oc =>
-                {
                     var op = (IDeclarationPatternOperation)oc.Operation;
                     var t = ((ILocalSymbol)op.DeclaredSymbol).Type;
                     if (!t.IsNonCopyable()) return;
@@ -151,6 +139,17 @@ namespace NonCopyable
                     CheckInstanceReadonly(oc, op.Instance, ReadOnlyInvokeRule);
 
                 }, OperationKind.Invocation);
+
+                csc.RegisterOperationAction(oc => {
+                    var op = (IDynamicInvocationOperation)oc.Operation;
+
+                    foreach(var arg in op.Arguments) {
+                        if (!arg.Type.IsNonCopyable()) continue;
+
+                        oc.ReportDiagnostic(Diagnostic.Create(GenericConstraintRule, arg.Syntax.GetLocation()));
+                    }
+
+                }, OperationKind.DynamicInvocation);
 
                 csc.RegisterOperationAction(oc =>
                 {
