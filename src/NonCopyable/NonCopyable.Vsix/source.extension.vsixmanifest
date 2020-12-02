@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" ?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="NonCopyable.1dd1f7a7-7947-4aa7-84c7-29edee95a0fa" Version="0.2" Language="en-US" Publisher="Nobuyuki Iwanaga"/>
+        <Identity Id="NonCopyable.1dd1f7a7-7947-4aa7-84c7-29edee95a0fa" Version="0.3" Language="en-US" Publisher="Nobuyuki Iwanaga"/>
         <DisplayName>NonCopyable</DisplayName>
         <Description xml:space="preserve">An analyzer for Non-Copyable structs.</Description>
         <License>LICENSE</License>
