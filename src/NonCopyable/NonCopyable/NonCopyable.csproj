@@ -15,7 +15,8 @@
     <PackageProjectUrl>https://github.com/ufcpp/NonCopyableAnalyzer</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>Analyzer for Non-copyable struct</Description>
-    <PackageReleaseNotes>Fixed false positive on conversion operators with in argument.</PackageReleaseNotes>
+    <PackageReleaseNotes>Support for C# 9 unmanaged function pointers.
+Allow usage of non-copyable in conditional expressions (? :).</PackageReleaseNotes>
     <PackageTags>NonCopyable, analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
   </PropertyGroup>
