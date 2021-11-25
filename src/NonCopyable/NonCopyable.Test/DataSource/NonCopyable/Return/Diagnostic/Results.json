@@ -31,4 +31,12 @@
     "path": "Class1.csx",
     "message-args": [ "Counter" ]
   },
+  {
+    "id": "NoCopy05",
+    "sevirity": "Error",
+    "line": 59,
+    "column": 34,
+    "path": "Class1.csx",
+    "message-args": [ "Counter" ]
+  }
 ]

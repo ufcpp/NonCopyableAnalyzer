@@ -61,6 +61,18 @@ namespace NonCopyable
                 {
                     var op = (IReturnOperation)oc.Operation;
                     if (op.ReturnedValue == null) return;
+
+                    // In the abscense of data flow analysis we can treat
+                    // return of a local variable or a parameter as a "move".
+                    if ((op.ReturnedValue.Kind == OperationKind.LocalReference
+                        || op.ReturnedValue.Kind == OperationKind.ParameterReference)
+                        && op.Kind == OperationKind.Return)
+                    {
+                        var varScope = op.ReturnedValue.GetSymbol().ContainingSymbol;
+                        var opScope = op.SemanticModel.GetEnclosingSymbol(op.Syntax.SpanStart);
+                        if (SymbolEqualityComparer.Default.Equals(varScope, opScope)) return;
+                    }
+
                     CheckCopyability(oc, op.ReturnedValue, ReturnRule);
                 }, OperationKind.Return,
                 OperationKind.YieldReturn);

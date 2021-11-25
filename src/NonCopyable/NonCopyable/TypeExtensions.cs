@@ -1,4 +1,6 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System;
+
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
@@ -97,5 +99,14 @@ namespace NonCopyable
 
         static bool IsValid(OperationKind kind)
             => kind != OperationKind.None && kind != OperationKind.Invalid;
+
+        public static ISymbol GetSymbol(this IOperation op)
+        {
+            if (op.Kind == OperationKind.LocalReference)
+                return ((ILocalReferenceOperation)op).Local;
+            if (op.Kind == OperationKind.ParameterReference)
+                return ((IParameterReferenceOperation)op).Parameter;
+            throw new NotSupportedException(op.Kind.ToString());
+        }
     }
 }

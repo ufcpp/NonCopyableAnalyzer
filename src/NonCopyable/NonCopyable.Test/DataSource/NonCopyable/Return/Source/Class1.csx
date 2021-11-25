@@ -9,7 +9,7 @@ using System.Diagnostics;
 internal class NonCopyableAttribute : Attribute { }
 
 [NonCopyable]
-struct Counter
+partial struct Counter
 {
     private int _i;
     public Counter(int i) => _i = i;
@@ -53,11 +53,25 @@ class Program
         var c4 = Enumerable.Range(0, 5).Select(_ => new Counter());
         var c5 = Enumerable.Range(0, 5).Select(_ => _c); // ❌
 
+        void NestedCapturedReturn()
+        {
+            var tmp = new Counter();
+            Counter Capture() => tmp; // ❌
+        }
+
+        Counter ReturnTempVar()
+        {
+            var result = new Counter();
+            return result;
+        }
+
         var r = ref Ref();
         var v = Ref();
         
         var r = ref ArrayRef();
         var v = ArrayRef();
+
+        var fromTV = ReturnTempVar();
     }
 
     public static ref Counter Ref() { return ref _c; }
@@ -65,4 +79,9 @@ class Program
     public static Counter CreateCond() => true ? new Counter() : default;
     static readonly delegate* unmanaged<Counter> pointerBasedFactory;
     public static Counter CreatePointerBasedFactory() => pointerBasedFactory();
+}
+
+partial struct Counter
+{
+    public void Dispose() { }
 }
