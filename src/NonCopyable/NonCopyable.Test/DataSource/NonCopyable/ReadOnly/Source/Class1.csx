@@ -46,7 +46,7 @@ class Program
         var v4 = ro.Value; // ❌
         ro.M(); // ❌
 
-        Action a = c.M; // ❌
+        Func<int> a = c.M; // ❌
     }
 
     static void MIn(in Counter ro)

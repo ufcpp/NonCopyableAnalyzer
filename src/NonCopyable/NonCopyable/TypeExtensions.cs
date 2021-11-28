@@ -1,4 +1,6 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System;
+
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
@@ -78,13 +80,33 @@ namespace NonCopyable
                 if (parent == SyntaxKind.RefExpression) return true;
             }
 
+            if (k == OperationKind.Conditional)
+            {
+                var cond = (IConditionalOperation)op;
+                return cond.WhenFalse.CanCopy() && cond.WhenFalse.CanCopy();
+            }
+
             return k == OperationKind.ObjectCreation
                 || k == OperationKind.DefaultValue
                 || k == OperationKind.Literal
-                || k == OperationKind.Invocation;
+                || k == OperationKind.Invocation
+                // workaround for https://github.com/dotnet/roslyn/issues/49751
+                || !IsValid(k) && op.Syntax is InvocationExpressionSyntax;
 
             //todo: should return value be OK?
             //todo: move semantics
+        }
+
+        static bool IsValid(OperationKind kind)
+            => kind != OperationKind.None && kind != OperationKind.Invalid;
+
+        public static ISymbol GetSymbol(this IOperation op)
+        {
+            if (op.Kind == OperationKind.LocalReference)
+                return ((ILocalReferenceOperation)op).Local;
+            if (op.Kind == OperationKind.ParameterReference)
+                return ((IParameterReferenceOperation)op).Parameter;
+            throw new NotSupportedException(op.Kind.ToString());
         }
     }
 }

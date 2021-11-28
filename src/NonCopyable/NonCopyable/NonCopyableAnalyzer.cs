@@ -61,6 +61,18 @@ namespace NonCopyable
                 {
                     var op = (IReturnOperation)oc.Operation;
                     if (op.ReturnedValue == null) return;
+
+                    // In the abscense of data flow analysis we can treat
+                    // return of a local variable or a parameter as a "move".
+                    if ((op.ReturnedValue.Kind == OperationKind.LocalReference
+                        || op.ReturnedValue.Kind == OperationKind.ParameterReference)
+                        && op.Kind == OperationKind.Return)
+                    {
+                        var varScope = op.ReturnedValue.GetSymbol().ContainingSymbol;
+                        var opScope = op.SemanticModel.GetEnclosingSymbol(op.Syntax.SpanStart);
+                        if (SymbolEqualityComparer.Default.Equals(varScope, opScope)) return;
+                    }
+
                     CheckCopyability(oc, op.ReturnedValue, ReturnRule);
                 }, OperationKind.Return,
                 OperationKind.YieldReturn);
@@ -86,7 +98,7 @@ namespace NonCopyable
                         return; 
                     }
 
-                    oc.ReportDiagnostic(Diagnostic.Create(ConversionRule, v.Syntax.GetLocation(), t.Name));
+                    oc.ReportDiagnostic(Error(v.Syntax, ConversionRule, t.Name));
                 }, OperationKind.Conversion);
 
                 csc.RegisterOperationAction(oc =>
@@ -103,22 +115,10 @@ namespace NonCopyable
 
                 csc.RegisterOperationAction(oc =>
                 {
-                    var op = (ICollectionElementInitializerOperation)oc.Operation;
-
-                    if (!HasNonCopyableParameter(op.AddMethod)) return;
-
-                    foreach (var a in op.Arguments)
-                    {
-                        CheckCopyability(oc, a, InitializerRule);
-                    }
-                }, OperationKind.CollectionElementInitializer);
-
-                csc.RegisterOperationAction(oc =>
-                {
                     var op = (IDeclarationPatternOperation)oc.Operation;
                     var t = ((ILocalSymbol)op.DeclaredSymbol).Type;
                     if (!t.IsNonCopyable()) return;
-                    oc.ReportDiagnostic(Diagnostic.Create(PatternRule, op.Syntax.GetLocation(), t.Name));
+                    oc.ReportDiagnostic(Error(op.Syntax, PatternRule, t.Name));
                 }, OperationKind.DeclarationPattern);
 
                 csc.RegisterOperationAction(oc =>
@@ -152,13 +152,24 @@ namespace NonCopyable
 
                 }, OperationKind.Invocation);
 
+                csc.RegisterOperationAction(oc => {
+                    var op = (IDynamicInvocationOperation)oc.Operation;
+
+                    foreach(var arg in op.Arguments) {
+                        if (!arg.Type.IsNonCopyable()) continue;
+
+                        oc.ReportDiagnostic(Error(arg.Syntax, GenericConstraintRule));
+                    }
+
+                }, OperationKind.DynamicInvocation);
+
                 csc.RegisterOperationAction(oc =>
                 {
                     // delagate creation
                     var op = (IMemberReferenceOperation)oc.Operation;
                     if (op.Instance == null) return;
                     if (!op.Instance.Type.IsNonCopyable()) return;
-                    oc.ReportDiagnostic(Diagnostic.Create(DelegateRule, op.Instance.Syntax.GetLocation(), op.Instance.Type.Name));
+                    oc.ReportDiagnostic(Error(op.Instance.Syntax, DelegateRule, op.Instance.Type.Name));
                 }, OperationKind.MethodReference);
 
                 csc.RegisterSymbolAction(sac =>
@@ -168,7 +179,7 @@ namespace NonCopyable
                     if (!f.Type.IsNonCopyable()) return;
                     if (f.ContainingType.IsReferenceType) return;
                     if (f.ContainingType.IsNonCopyable()) return;
-                    sac.ReportDiagnostic(Diagnostic.Create(FieldDeclarationRule, f.DeclaringSyntaxReferences[0].GetSyntax().GetLocation(), f.Type.Name));
+                    sac.ReportDiagnostic(Error(f.DeclaringSyntaxReferences[0].GetSyntax(), FieldDeclarationRule, f.Type.Name));
                 }, SymbolKind.Field);
             });
 
@@ -192,7 +203,7 @@ namespace NonCopyable
                     var a = arguments[i];
 
                     if (a.IsNonCopyable() && !p.IsNonCopyable())
-                        oc.ReportDiagnostic(Diagnostic.Create(rule, op.Syntax.GetLocation(), a.Name));
+                        oc.ReportDiagnostic(Error(op.Syntax, rule, a.Name));
                 }
             }
         }
@@ -206,9 +217,14 @@ namespace NonCopyable
 
             if (IsInstanceReadonly(instance))
             {
-                oc.ReportDiagnostic(Diagnostic.Create(rule, instance.Syntax.GetLocation(), t.Name));
+                oc.ReportDiagnostic(Error(instance.Syntax, rule, t.Name));
             }
         }
+
+        private static Diagnostic Error(SyntaxNode at, DiagnosticDescriptor rule, string name = null)
+            => name is null
+                ? Diagnostic.Create(rule, at.GetLocation())
+                : Diagnostic.Create(rule, at.GetLocation(), name);
 
         private static bool IsInstanceReadonly(IOperation instance)
         {
@@ -246,7 +262,7 @@ namespace NonCopyable
             var t = v.Type;
             if (!t.IsNonCopyable()) return;
             if (v.CanCopy()) return;
-            oc.ReportDiagnostic(Diagnostic.Create(rule, v.Syntax.GetLocation(), t.Name));
+            oc.ReportDiagnostic(Error(v.Syntax, rule, t.Name));
         }
     }
 }
